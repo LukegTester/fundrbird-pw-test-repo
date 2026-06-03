@@ -1,3 +1,12 @@
+# Local planning
+docs/implementation-todo.md
+
+# Environment
+.env
+
+# Auth storage state
+.auth/*
+!.auth/.gitkeep
 
 # Playwright
 node_modules/
@@ -5,4 +14,3 @@ node_modules/
 /playwright-report/
 /blob-report/
 /playwright/.cache/
-/playwright/.auth/

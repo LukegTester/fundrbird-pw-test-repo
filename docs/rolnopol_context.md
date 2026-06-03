@@ -1,17 +1,19 @@
 # 🤖 Project Context: Rolnopol Application
 
 ## 📌 Project Purpose & Characteristics
-**Rolnopol** is a web application created by *jaktestowac.pl*, serving as a training ground to learn and practice test automation (e.g., using Playwright). 
+
+**Rolnopol** is a web application created by _jaktestowac.pl_, serving as a training ground to learn and practice test automation (e.g., using Playwright).
 This is not a standard production application. It contains **intentionally introduced bugs**, edge cases, and special tools designed to either facilitate or complicate testing.
 
 ---
 
 ## 🏗️ Architecture & Technologies (High-Level)
+
 The project is a **Monolith** based on a client-server architecture.
 
 1. **Frontend (`public/` directory)**
    - **Architecture:** Multi-Page Application (MPA). Each page is a separate `.html` file (e.g., `login.html`, `marketplace.html`).
-   - **Technology:** Vanilla JavaScript (pure JS), HTML5, CSS3. No frameworks like React/Angular are used. 
+   - **Technology:** Vanilla JavaScript (pure JS), HTML5, CSS3. No frameworks like React/Angular are used.
    - **Implications for E2E Tests:** Due to Vanilla JS, the application relies mostly on standard DOM events. Locators should be based on `id`, `data-testid` (where available), and standard CSS classes. Dynamic component loading (e.g., headers) is handled via the Fetch API.
 
 2. **Backend (`api/`, `controllers/`, `services/`, `routes/` directories)**
@@ -28,7 +30,7 @@ The project is a **Monolith** based on a client-server architecture.
 4. **Modular Subsystems & Plugins**
    - **`modules/` Directory:** Contains encapsulated feature domains like `buddy` (virtual pet logic) and `notification-center` (event bus, policy routers, webhook dispatchers).
    - **`plugins/` Directory:** A dynamic plugin runtime (`plugin-runtime/`) that auto-discovers and loads middleware/routes (e.g., `teapot-blocker-plugin`, `response-size-logger-plugin`).
-   - **Chatbot / LLM Engine:** Located in `services/chatbot/`. It implements various bot profiles (docs guide, alerts guide) and connector patterns (`mock-llm`, `gemini-llm`, `openrouter-llm`). 
+   - **Chatbot / LLM Engine:** Located in `services/chatbot/`. It implements various bot profiles (docs guide, alerts guide) and connector patterns (`mock-llm`, `gemini-llm`, `openrouter-llm`).
 
 ---
 

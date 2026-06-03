@@ -212,10 +212,10 @@ export class LoginPage {
   private readonly errorMessage: Locator;
 
   constructor(private readonly page: Page) {
-    this.emailInput = page.getByTestId('login-email-input');
-    this.passwordInput = page.getByTestId('login-password-input');
-    this.submitButton = page.getByTestId('login-submit-button');
-    this.errorMessage = page.getByTestId('login-error-message');
+    this.emailInput = page.getByTestId("login-email-input");
+    this.passwordInput = page.getByTestId("login-password-input");
+    this.submitButton = page.getByTestId("login-submit-button");
+    this.errorMessage = page.getByTestId("login-error-message");
   }
 
   async open(): Promise<void> {
@@ -233,8 +233,8 @@ export class LoginPage {
 Avoid raw selectors in tests:
 
 ```ts
-await page.locator('#email').fill('demo@example.com');
-await page.locator('.btn-primary').click();
+await page.locator("#email").fill("demo@example.com");
+await page.locator(".btn-primary").click();
 ```
 
 Tests should use Page Object methods:
@@ -302,19 +302,19 @@ Rolnopol is a training application and may not always expose perfect accessibili
 Good:
 
 ```ts
-page.getByTestId('login-email-input');
-page.getByRole('button', { name: 'Login' });
-page.getByLabel('Email');
-page.getByText('Invalid credentials');
-page.locator('#email');
+page.getByTestId("login-email-input");
+page.getByRole("button", { name: "Login" });
+page.getByLabel("Email");
+page.getByText("Invalid credentials");
+page.locator("#email");
 ```
 
 Avoid:
 
 ```ts
-page.locator('div > div > section > button');
-page.locator('//button[1]');
-page.locator('.btn').nth(2);
+page.locator("div > div > section > button");
+page.locator("//button[1]");
+page.locator(".btn").nth(2);
 ```
 
 Rules:
@@ -341,7 +341,7 @@ Assert — verify the result
 Good:
 
 ```ts
-test('user can log in with valid credentials @ui @smoke', async ({ page }) => {
+test("user can log in with valid credentials @ui @smoke", async ({ page }) => {
   // Arrange
   const loginPage = new LoginPage(page);
 
@@ -367,18 +367,24 @@ Test names should describe user-visible or business behavior.
 Good:
 
 ```ts
-test('user can log in with valid credentials @ui @smoke', async ({ page }) => {});
-test('invalid login shows an error message @ui', async ({ page }) => {});
-test('user can buy a commodity from marketplace @ui @business', async ({ page }) => {});
-test('login API response matches OpenAPI contract @api @contract', async ({ request }) => {});
+test("user can log in with valid credentials @ui @smoke", async ({
+  page,
+}) => {});
+test("invalid login shows an error message @ui", async ({ page }) => {});
+test("user can buy a commodity from marketplace @ui @business", async ({
+  page,
+}) => {});
+test("login API response matches OpenAPI contract @api @contract", async ({
+  request,
+}) => {});
 ```
 
 Avoid:
 
 ```ts
-test('login test', async () => {});
-test('check marketplace', async () => {});
-test('test 1', async () => {});
+test("login test", async () => {});
+test("check marketplace", async () => {});
+test("test 1", async () => {});
 ```
 
 Use tags intentionally:
@@ -405,7 +411,7 @@ For UI tests, prefer user-visible assertions.
 Good:
 
 ```ts
-await expect(page.getByTestId('purchase-confirmation')).toBeVisible();
+await expect(page.getByTestId("purchase-confirmation")).toBeVisible();
 await expect(page).toHaveURL(/marketplace/);
 ```
 
@@ -420,7 +426,7 @@ business-relevant response body fields
 Good:
 
 ```ts
-expectResponseStatus(response, 200, 'Login API response');
+expectResponseStatus(response, 200, "Login API response");
 
 expect(
   body.data.email,
@@ -480,8 +486,8 @@ Also acceptable when the context matters:
 
 ```ts
 await expect(
-  page.getByTestId('purchase-confirmation'),
-  'purchase confirmation should be visible after successful marketplace buy',
+  page.getByTestId("purchase-confirmation"),
+  "purchase confirmation should be visible after successful marketplace buy",
 ).toBeVisible();
 ```
 
@@ -503,7 +509,7 @@ Good:
 const expectedStatusCode = 200;
 const expectedEmail = demoUser.email;
 
-expectResponseStatus(response, expectedStatusCode, 'Login API response');
+expectResponseStatus(response, expectedStatusCode, "Login API response");
 expect(body.data.email).toBe(expectedEmail);
 ```
 
@@ -512,19 +518,22 @@ Do not extract values only to satisfy a rule if it makes the test noisier.
 Acceptable:
 
 ```ts
-expect(body.data.token, 'expected login response to contain token').toBeTruthy();
+expect(
+  body.data.token,
+  "expected login response to contain token",
+).toBeTruthy();
 ```
 
 Avoid:
 
 ```ts
-expect(someComplexFunction()).toBe('hardcoded value');
+expect(someComplexFunction()).toBe("hardcoded value");
 ```
 
 Better:
 
 ```ts
-const expectedMessage = 'Invalid credentials';
+const expectedMessage = "Invalid credentials";
 const actualMessage = await loginPage.getErrorMessage();
 
 expect(actualMessage).toBe(expectedMessage);
@@ -560,7 +569,7 @@ Tests decide what to assert:
 ```ts
 const response = await authRequest.login(demoUser.email, demoUser.password);
 
-expectResponseStatus(response, 200, 'Login API response');
+expectResponseStatus(response, 200, "Login API response");
 ```
 
 Avoid putting assertions inside request classes.
@@ -603,16 +612,16 @@ Good:
 ```ts
 const response = await authRequest.login(demoUser.email, demoUser.password);
 
-expectResponseStatus(response, 200, 'Login API response');
+expectResponseStatus(response, 200, "Login API response");
 
 const body = await response.json();
 
 await expectResponseMatchesOpenApi({
   body,
   path: routes.api.login,
-  method: 'post',
+  method: "post",
   statusCode: 200,
-  context: 'Login API response',
+  context: "Login API response",
 });
 
 expect(body.data.email).toBe(demoUser.email);
@@ -635,7 +644,7 @@ OpenAPI helpers should be reusable and explicit.
 Good helper name:
 
 ```ts
-expectResponseMatchesOpenApi()
+expectResponseMatchesOpenApi();
 ```
 
 The helper should require:
@@ -654,9 +663,9 @@ Example call:
 await expectResponseMatchesOpenApi({
   body,
   path: routes.api.login,
-  method: 'post',
+  method: "post",
   statusCode: 200,
-  context: 'Login API response',
+  context: "Login API response",
 });
 ```
 
@@ -751,8 +760,8 @@ Recommended pattern:
 const [buyResponse] = await Promise.all([
   page.waitForResponse(
     (response) =>
-      response.url().includes('/api/v1/marketplace/buy') &&
-      response.request().method() === 'POST',
+      response.url().includes("/api/v1/marketplace/buy") &&
+      response.request().method() === "POST",
   ),
   marketplacePage.buyFirstAvailableCommodity(),
 ]);
@@ -791,13 +800,13 @@ Do not mock happy paths that can be covered through the real backend.
 Good:
 
 ```ts
-await page.route('**/api/v1/marketplace/offers**', async (route) => {
+await page.route("**/api/v1/marketplace/offers**", async (route) => {
   await route.fulfill({
     status: 500,
-    contentType: 'application/json',
+    contentType: "application/json",
     body: JSON.stringify({
       success: false,
-      error: 'Internal server error',
+      error: "Internal server error",
     }),
   });
 });
@@ -879,7 +888,7 @@ expect(
 Avoid vague errors:
 
 ```ts
-throw new Error('Failed');
+throw new Error("Failed");
 ```
 
 ---
@@ -891,15 +900,15 @@ Use path aliases for project imports.
 Good:
 
 ```ts
-import { LoginPage } from '@src/pages/login.page';
-import { routes } from '@src/config/routes';
-import { demoUser } from '@src/test-data/users';
+import { LoginPage } from "@src/pages/login.page";
+import { routes } from "@src/config/routes";
+import { demoUser } from "@src/test-data/users";
 ```
 
 Avoid deep relative imports when aliases are available:
 
 ```ts
-import { LoginPage } from '../../../src/pages/login.page';
+import { LoginPage } from "../../../src/pages/login.page";
 ```
 
 Relative imports are acceptable inside the same small folder.
@@ -915,7 +924,7 @@ Avoid `any`.
 Good:
 
 ```ts
-type HttpMethod = 'get' | 'post' | 'put' | 'patch' | 'delete';
+type HttpMethod = "get" | "post" | "put" | "patch" | "delete";
 ```
 
 Avoid:
@@ -1026,18 +1035,18 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/) using this p
 
 ### Type (choose first match)
 
-| Order | Question | Type |
-| --- | --- | --- |
-| 1 | Bug fix? | `fix` |
-| 2 | New or changed test behavior (UI/API)? | `feat` |
-| 3 | Tests added or corrected? | `test` |
-| 4 | Formatting only (no behavior)? | `style` |
-| 5 | Documentation only? | `docs` |
-| 6 | Dependencies, build tools, versions? | `build` |
-| 7 | CI/CD, Docker, GitHub Actions? | `ops` |
-| 8 | Maintenance (`.gitignore`, init, chores)? | `chore` |
-| 9 | Performance-focused change? | `perf` |
-| 10 | Otherwise | `refactor` |
+| Order | Question                                  | Type       |
+| ----- | ----------------------------------------- | ---------- |
+| 1     | Bug fix?                                  | `fix`      |
+| 2     | New or changed test behavior (UI/API)?    | `feat`     |
+| 3     | Tests added or corrected?                 | `test`     |
+| 4     | Formatting only (no behavior)?            | `style`    |
+| 5     | Documentation only?                       | `docs`     |
+| 6     | Dependencies, build tools, versions?      | `build`    |
+| 7     | CI/CD, Docker, GitHub Actions?            | `ops`      |
+| 8     | Maintenance (`.gitignore`, init, chores)? | `chore`    |
+| 9     | Performance-focused change?               | `perf`     |
+| 10    | Otherwise                                 | `refactor` |
 
 Common types for this repo:
 

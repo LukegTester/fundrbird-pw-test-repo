@@ -200,7 +200,7 @@ services:
   rolnopol:
     image: jaktestowac/rolnopol:1.0.24
     ports:
-      - '3000:3000'
+      - "3000:3000"
 ```
 
 Reasons:
@@ -230,7 +230,7 @@ USER_PASSWORD=demo123
 `config/env.config.ts`:
 
 ```ts
-import * as dotenv from 'dotenv';
+import * as dotenv from "dotenv";
 
 dotenv.config({ override: true });
 
@@ -244,12 +244,12 @@ const requireEnvVariable = (name: string): string => {
   return value;
 };
 
-export const BASE_URL = requireEnvVariable('BASE_URL');
-export const API_BASE_URL = requireEnvVariable('API_BASE_URL');
-export const OPENAPI_URL = requireEnvVariable('OPENAPI_URL');
+export const BASE_URL = requireEnvVariable("BASE_URL");
+export const API_BASE_URL = requireEnvVariable("API_BASE_URL");
+export const OPENAPI_URL = requireEnvVariable("OPENAPI_URL");
 
-export const USER_EMAIL = requireEnvVariable('USER_EMAIL');
-export const USER_PASSWORD = requireEnvVariable('USER_PASSWORD');
+export const USER_EMAIL = requireEnvVariable("USER_EMAIL");
+export const USER_PASSWORD = requireEnvVariable("USER_PASSWORD");
 ```
 
 Rules:
@@ -272,21 +272,21 @@ OpenAPI paths are relative to `/api/v1`, so API routes should not include `/api/
 ```ts
 export const routes = {
   pages: {
-    login: '/login.html',
-    marketplace: '/marketplace.html',
+    login: "/login.html",
+    marketplace: "/marketplace.html",
   },
 
   api: {
-    login: '/login',
-    authorization: '/authorization',
-    healthcheck: '/healthcheck',
-    ping: '/ping',
-    marketplaceOffers: '/marketplace/offers',
-    marketplaceBuy: '/marketplace/buy',
+    login: "/login",
+    authorization: "/authorization",
+    healthcheck: "/healthcheck",
+    ping: "/ping",
+    marketplaceOffers: "/marketplace/offers",
+    marketplaceBuy: "/marketplace/buy",
   },
 
   openapi: {
-    document: '/schema/openapi.json',
+    document: "/schema/openapi.json",
   },
 } as const;
 ```
@@ -386,13 +386,13 @@ Use storage state for authenticated UI tests, but keep login tests public.
 `playwright.config.ts`:
 
 ```ts
-import { defineConfig, devices } from '@playwright/test';
-import { BASE_URL } from './config/env.config';
+import { defineConfig, devices } from "@playwright/test";
+import { BASE_URL } from "./config/env.config";
 
-export const authFile = '.auth/user.json';
+export const authFile = ".auth/user.json";
 
 export default defineConfig({
-  testDir: './tests',
+  testDir: "./tests",
 
   timeout: 60_000,
 
@@ -405,37 +405,37 @@ export default defineConfig({
   workers: 1,
 
   reporter: [
-    ['list'],
-    ['html', { outputFolder: 'playwright-report', open: 'never' }],
+    ["list"],
+    ["html", { outputFolder: "playwright-report", open: "never" }],
   ],
 
   use: {
     baseURL: BASE_URL,
-    trace: 'retain-on-failure',
-    video: 'retain-on-failure',
-    screenshot: 'only-on-failure',
+    trace: "retain-on-failure",
+    video: "retain-on-failure",
+    screenshot: "only-on-failure",
   },
 
   projects: [
     {
-      name: 'setup',
+      name: "setup",
       testMatch: /.*\.setup\.ts/,
     },
 
     {
-      name: 'chromium-public',
-      testIgnore: ['tests/ui/authenticated/**/*.spec.ts'],
+      name: "chromium-public",
+      testIgnore: ["tests/ui/authenticated/**/*.spec.ts"],
       use: {
-        ...devices['Desktop Chrome'],
+        ...devices["Desktop Chrome"],
       },
     },
 
     {
-      name: 'chromium-authenticated',
-      testMatch: ['tests/ui/authenticated/**/*.spec.ts'],
-      dependencies: ['setup'],
+      name: "chromium-authenticated",
+      testMatch: ["tests/ui/authenticated/**/*.spec.ts"],
+      dependencies: ["setup"],
       use: {
-        ...devices['Desktop Chrome'],
+        ...devices["Desktop Chrome"],
         storageState: authFile,
       },
     },
@@ -464,12 +464,12 @@ This is better than logging in through UI in every authenticated test.
 `tests/setup/auth.setup.ts`:
 
 ```ts
-import { test as setup, expect } from '@playwright/test';
-import { authFile } from '../../playwright.config';
-import { LoginPage } from '@src/pages/login.page';
-import { demoUser } from '@src/test-data/users';
+import { test as setup, expect } from "@playwright/test";
+import { authFile } from "../../playwright.config";
+import { LoginPage } from "@src/pages/login.page";
+import { demoUser } from "@src/test-data/users";
 
-setup('authenticate demo user', async ({ page }) => {
+setup("authenticate demo user", async ({ page }) => {
   const loginPage = new LoginPage(page);
 
   await loginPage.open();
@@ -518,11 +518,11 @@ Rolnopol is a training application and some views may not have ideal accessibili
 Use:
 
 ```ts
-page.getByTestId('login-email-input');
-page.getByRole('button', { name: 'Login' });
-page.getByLabel('Email');
-page.getByText('Invalid credentials');
-page.locator('#email');
+page.getByTestId("login-email-input");
+page.getByRole("button", { name: "Login" });
+page.getByLabel("Email");
+page.getByText("Invalid credentials");
+page.locator("#email");
 ```
 
 Avoid:
@@ -553,8 +553,8 @@ Page Objects should expose user-level actions and assertions.
 Example `src/pages/login.page.ts`:
 
 ```ts
-import { expect, Locator, Page } from '@playwright/test';
-import { routes } from '@src/config/routes';
+import { expect, Locator, Page } from "@playwright/test";
+import { routes } from "@src/config/routes";
 
 type LoginCredentials = {
   email: string;
@@ -568,10 +568,10 @@ export class LoginPage {
   private readonly errorMessage: Locator;
 
   constructor(private readonly page: Page) {
-    this.emailInput = page.getByTestId('login-email-input');
-    this.passwordInput = page.getByTestId('login-password-input');
-    this.submitButton = page.getByTestId('login-submit-button');
-    this.errorMessage = page.getByTestId('login-error-message');
+    this.emailInput = page.getByTestId("login-email-input");
+    this.passwordInput = page.getByTestId("login-password-input");
+    this.submitButton = page.getByTestId("login-submit-button");
+    this.errorMessage = page.getByTestId("login-error-message");
   }
 
   async open(): Promise<void> {
@@ -618,7 +618,7 @@ factories
 `src/test-data/users.ts`:
 
 ```ts
-import { USER_EMAIL, USER_PASSWORD } from '@config/env.config';
+import { USER_EMAIL, USER_PASSWORD } from "@config/env.config";
 
 export const demoUser = {
   email: USER_EMAIL,
@@ -626,8 +626,8 @@ export const demoUser = {
 } as const;
 
 export const invalidUser = {
-  email: 'invalid@example.com',
-  password: 'wrong-password',
+  email: "invalid@example.com",
+  password: "wrong-password",
 } as const;
 ```
 
@@ -648,7 +648,7 @@ Use faker for:
 `src/factories/auth.factory.ts`:
 
 ```ts
-import { faker } from '@faker-js/faker';
+import { faker } from "@faker-js/faker";
 
 export const createInvalidLoginPayload = (): {
   email: string;
@@ -662,7 +662,7 @@ export const createInvalidLoginPayload = (): {
 `src/factories/marketplace.factory.ts`:
 
 ```ts
-import { faker } from '@faker-js/faker';
+import { faker } from "@faker-js/faker";
 
 export const createInvalidMarketplaceBuyPayload = (): {
   offerId: string;
@@ -689,9 +689,9 @@ Use request classes, not over-abstracted clients.
 Example `src/api/requests/auth.request.ts`:
 
 ```ts
-import { APIRequestContext, APIResponse } from '@playwright/test';
-import { API_BASE_URL } from '@config/env.config';
-import { routes } from '@src/config/routes';
+import { APIRequestContext, APIResponse } from "@playwright/test";
+import { API_BASE_URL } from "@config/env.config";
+import { routes } from "@src/config/routes";
 
 export class AuthRequest {
   constructor(private readonly request: APIRequestContext) {}
@@ -710,9 +710,9 @@ export class AuthRequest {
 Example `src/api/requests/marketplace.request.ts`:
 
 ```ts
-import { APIRequestContext, APIResponse } from '@playwright/test';
-import { API_BASE_URL } from '@config/env.config';
-import { routes } from '@src/config/routes';
+import { APIRequestContext, APIResponse } from "@playwright/test";
+import { API_BASE_URL } from "@config/env.config";
+import { routes } from "@src/config/routes";
 
 export class MarketplaceRequest {
   constructor(private readonly request: APIRequestContext) {}
@@ -781,7 +781,7 @@ Use helper assertions with clear failure messages.
 `src/api/assertions/api-status.assertion.ts`:
 
 ```ts
-import { APIResponse, expect } from '@playwright/test';
+import { APIResponse, expect } from "@playwright/test";
 
 export const expectResponseStatus = (
   response: APIResponse,
@@ -800,7 +800,7 @@ Example usage:
 ```ts
 const response = await authRequest.login(demoUser.email, demoUser.password);
 
-expectResponseStatus(response, 200, 'Login API response');
+expectResponseStatus(response, 200, "Login API response");
 ```
 
 This keeps failure output readable.
@@ -818,8 +818,8 @@ The document should be cached after the first request.
 `src/api/openapi/openapi.loader.ts`:
 
 ```ts
-import { APIRequestContext } from '@playwright/test';
-import { OPENAPI_URL } from '@config/env.config';
+import { APIRequestContext } from "@playwright/test";
+import { OPENAPI_URL } from "@config/env.config";
 
 export type OpenApiDocument = Record<string, unknown>;
 
@@ -872,11 +872,11 @@ paths['/login'].post.responses['200']
 `src/api/assertions/openapi-response.assertion.ts`:
 
 ```ts
-import { APIRequestContext, expect } from '@playwright/test';
-import OpenAPIResponseValidator from 'openapi-response-validator';
-import { loadOpenApiDocument } from '@src/api/openapi/openapi.loader';
+import { APIRequestContext, expect } from "@playwright/test";
+import OpenAPIResponseValidator from "openapi-response-validator";
+import { loadOpenApiDocument } from "@src/api/openapi/openapi.loader";
 
-type HttpMethod = 'get' | 'post' | 'put' | 'patch' | 'delete';
+type HttpMethod = "get" | "post" | "put" | "patch" | "delete";
 
 type OpenApiResponseValidationOptions = {
   request: APIRequestContext;
@@ -897,7 +897,10 @@ export const expectResponseMatchesOpenApi = async ({
 }: OpenApiResponseValidationOptions): Promise<void> => {
   const openApiDocument = await loadOpenApiDocument(request);
 
-  const paths = openApiDocument.paths as Record<string, Record<string, unknown>>;
+  const paths = openApiDocument.paths as Record<
+    string,
+    Record<string, unknown>
+  >;
   const pathDefinition = paths[path];
 
   if (!pathDefinition) {
@@ -943,19 +946,21 @@ The exact import/constructor style may need small adjustment during implementati
 `tests/api/auth-login.contract.spec.ts`:
 
 ```ts
-import { test, expect } from '@playwright/test';
-import { AuthRequest } from '@src/api/requests/auth.request';
-import { expectResponseStatus } from '@src/api/assertions/api-status.assertion';
-import { expectResponseMatchesOpenApi } from '@src/api/assertions/openapi-response.assertion';
-import { routes } from '@src/config/routes';
-import { demoUser } from '@src/test-data/users';
+import { test, expect } from "@playwright/test";
+import { AuthRequest } from "@src/api/requests/auth.request";
+import { expectResponseStatus } from "@src/api/assertions/api-status.assertion";
+import { expectResponseMatchesOpenApi } from "@src/api/assertions/openapi-response.assertion";
+import { routes } from "@src/config/routes";
+import { demoUser } from "@src/test-data/users";
 
-test('user can authenticate through API @api @contract', async ({ request }) => {
+test("user can authenticate through API @api @contract", async ({
+  request,
+}) => {
   const authRequest = new AuthRequest(request);
 
   const response = await authRequest.login(demoUser.email, demoUser.password);
 
-  expectResponseStatus(response, 200, 'Login API response');
+  expectResponseStatus(response, 200, "Login API response");
 
   const body = await response.json();
 
@@ -963,9 +968,9 @@ test('user can authenticate through API @api @contract', async ({ request }) => 
     request,
     body,
     path: routes.api.login,
-    method: 'post',
+    method: "post",
     statusCode: 200,
-    context: 'Login API response',
+    context: "Login API response",
   });
 
   expect(
@@ -978,7 +983,10 @@ test('user can authenticate through API @api @contract', async ({ request }) => 
     `expected authenticated user email to be ${demoUser.email}, and received ${body.data.email}`,
   ).toBe(demoUser.email);
 
-  expect(body.data.token, 'expected login response to contain token').toBeTruthy();
+  expect(
+    body.data.token,
+    "expected login response to contain token",
+  ).toBeTruthy();
 });
 ```
 
@@ -998,10 +1006,10 @@ This test verifies that the OpenAPI document is available.
 `tests/api/openapi-documentation.spec.ts`:
 
 ```ts
-import { test, expect } from '@playwright/test';
-import { OPENAPI_URL } from '@config/env.config';
+import { test, expect } from "@playwright/test";
+import { OPENAPI_URL } from "@config/env.config";
 
-test('OpenAPI document is available @api @contract', async ({ request }) => {
+test("OpenAPI document is available @api @contract", async ({ request }) => {
   const response = await request.get(OPENAPI_URL);
 
   expect(
@@ -1011,9 +1019,15 @@ test('OpenAPI document is available @api @contract', async ({ request }) => {
 
   const body = await response.json();
 
-  expect(body.openapi, 'expected OpenAPI document to contain openapi version').toBeTruthy();
-  expect(body.paths, 'expected OpenAPI document to contain paths').toBeTruthy();
-  expect(body.components, 'expected OpenAPI document to contain components').toBeTruthy();
+  expect(
+    body.openapi,
+    "expected OpenAPI document to contain openapi version",
+  ).toBeTruthy();
+  expect(body.paths, "expected OpenAPI document to contain paths").toBeTruthy();
+  expect(
+    body.components,
+    "expected OpenAPI document to contain components",
+  ).toBeTruthy();
 });
 ```
 
@@ -1039,13 +1053,13 @@ Do not mock happy paths if they can be covered through real backend.
 Example:
 
 ```ts
-await page.route('**/api/v1/marketplace/offers**', async (route) => {
+await page.route("**/api/v1/marketplace/offers**", async (route) => {
   await route.fulfill({
     status: 500,
-    contentType: 'application/json',
+    contentType: "application/json",
     body: JSON.stringify({
       success: false,
-      error: 'Internal server error',
+      error: "Internal server error",
     }),
   });
 });
@@ -1085,8 +1099,8 @@ Recommended pattern:
 const [buyResponse] = await Promise.all([
   page.waitForResponse(
     (response) =>
-      response.url().includes('/api/v1/marketplace/buy') &&
-      response.request().method() === 'POST',
+      response.url().includes("/api/v1/marketplace/buy") &&
+      response.request().method() === "POST",
   ),
   marketplacePage.buyFirstAvailableOffer(),
 ]);
@@ -1310,13 +1324,13 @@ Why:
 
 Configure **repository variables** and **secrets** in GitHub (Settings → Secrets and variables → Actions) instead of hardcoding values in the workflow.
 
-| Name | Type | Example value (local `.env`) |
-| --- | --- | --- |
-| `BASE_URL` | Variable | `http://localhost:3000` |
-| `API_BASE_URL` | Variable | `http://localhost:3000/api/v1` |
-| `OPENAPI_URL` | Variable | `http://localhost:3000/schema/openapi.json` |
-| `USER_EMAIL` | Variable | `demo@example.com` |
-| `USER_PASSWORD` | Secret | `demo123` |
+| Name            | Type     | Example value (local `.env`)                |
+| --------------- | -------- | ------------------------------------------- |
+| `BASE_URL`      | Variable | `http://localhost:3000`                     |
+| `API_BASE_URL`  | Variable | `http://localhost:3000/api/v1`              |
+| `OPENAPI_URL`   | Variable | `http://localhost:3000/schema/openapi.json` |
+| `USER_EMAIL`    | Variable | `demo@example.com`                          |
+| `USER_PASSWORD` | Secret   | `demo123`                                   |
 
 `.github/workflows/playwright.yml`:
 
@@ -1350,7 +1364,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: 'npm'
+          cache: "npm"
 
       - name: Install dependencies
         run: npm ci
@@ -1419,19 +1433,19 @@ globals
 `eslint.config.mjs` (minimal shape):
 
 ```js
-import eslint from '@eslint/js';
-import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
-import playwright from 'eslint-plugin-playwright';
-import globals from 'globals';
-import tseslint from 'typescript-eslint';
+import eslint from "@eslint/js";
+import eslintPluginPrettierRecommended from "eslint-plugin-prettier/recommended";
+import playwright from "eslint-plugin-playwright";
+import globals from "globals";
+import tseslint from "typescript-eslint";
 
 export default tseslint.config(
   eslint.configs.recommended,
   ...tseslint.configs.recommended,
   eslintPluginPrettierRecommended,
   {
-    ...playwright.configs['flat/recommended'],
-    files: ['tests/**/*.ts', '**/*.spec.ts'],
+    ...playwright.configs["flat/recommended"],
+    files: ["tests/**/*.ts", "**/*.spec.ts"],
   },
   {
     languageOptions: {
@@ -1440,8 +1454,8 @@ export default tseslint.config(
       },
     },
     rules: {
-      'no-console': 'error',
-      '@typescript-eslint/no-explicit-any': 'error',
+      "no-console": "error",
+      "@typescript-eslint/no-explicit-any": "error",
     },
   },
 );
@@ -1554,8 +1568,8 @@ Because of that, not every observed application issue should be treated as a tes
 ## Observed issues
 
 | Area | Observation | Impact | Recommendation |
-| --- | --- | --- | --- |
-| TBD | TBD | TBD | TBD |
+| ---- | ----------- | ------ | -------------- |
+| TBD  | TBD         | TBD    | TBD            |
 ```
 
 This file is useful if you discover behavior that looks like a real application bug or training-app edge case.
@@ -1566,11 +1580,11 @@ This file is useful if you discover behavior that looks like a real application 
 
 Keep agent guidance lightweight and close to the code. Conventions live in **`.cursor/rules/`**:
 
-| Rule file | Scope |
-| --- | --- |
+| Rule file              | Scope                                                                                                 |
+| ---------------------- | ----------------------------------------------------------------------------------------------------- |
 | `global-guideline.mdc` | Always applied — boundaries, coding standards summary, conventional commits, execution, quality gates |
-| `ui-guideline.mdc` | UI tests, setup, integration mocks, Page Objects |
-| `api-guideline.mdc` | API tests, request layer, factories, OpenAPI assertions |
+| `ui-guideline.mdc`     | UI tests, setup, integration mocks, Page Objects                                                      |
+| `api-guideline.mdc`    | API tests, request layer, factories, OpenAPI assertions                                               |
 
 Detailed references: this architecture document, `docs/coding-standards.md`, and `docs/rolnopol_context.md`. Rules stay short and point to docs rather than duplicate full examples.
 
