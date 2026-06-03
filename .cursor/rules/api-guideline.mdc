@@ -1,0 +1,70 @@
+---
+description: API request layer, OpenAPI contract validation, factories, and assertion patterns
+globs: tests/api/**,src/api/**,src/factories/**
+alwaysApply: false
+---
+
+# API guidelines
+
+Applies when editing API tests, request classes, assertions, or factories. Reference: `@docs/test_framework_architecture_.md` (§15–21).
+
+## Layering
+
+- **Request classes** (`src/api/requests/*.request.ts`): HTTP only — `post`/`get` with `API_BASE_URL` + `routes.api.*`.
+- **Tests** (`tests/api/*.spec.ts`): orchestrate calls and choose what to assert.
+- **Do not** build a generic API framework or over-abstracted client too early.
+
+## Authentication
+
+- Login: `POST` `${API_BASE_URL}${routes.api.login}` with `{ email, password }`.
+- Protected calls: JWT in header **`token`** (Rolnopol convention), not `Authorization: Bearer`.
+
+## Assertion strategy (per test)
+
+Minimum when the scenario matters:
+
+1. **Status code** — use `expectResponseStatus(response, expected, 'Human context')` from `src/api/assertions/api-status.assertion.ts`.
+2. **OpenAPI schema** — when response contract matters, use `expectResponseMatchesOpenApi` with `path`, `method`, `statusCode` (lookup: `paths['/login'].post.responses['200']`).
+3. **Business fields** — only fields relevant to the scenario (e.g. `token`, `success`, error message).
+
+Do not validate every header/body field in every test.
+
+## OpenAPI rules
+
+- **OpenAPI = source of truth** — use `openapi-response-validator`;
+- Load document via `loadOpenApiDocument(request)` at **runtime in contract tests only** — not at module import / lint / typecheck.
+- Document is cached after first load per worker.
+- OpenAPI paths in validators are **relative** (e.g. `/login`), without `/api/v1` prefix.
+
+## Factories (`src/factories/`)
+
+- Use `@faker-js/faker` in factories for invalid payloads and unique values when static data is not enough.
+- Prefer **static** data in `src/test-data/users.ts` when clearer (e.g. `demoUser`, `invalidUser`).
+- Factories return plain objects — do not hide important business values behind randomness.
+
+## Stability
+
+- Fast parallel API calls may hit **429** (rate limit) — default worker count is 1.
+- JSON-file DB: avoid heavy parallel mutation — default worker count is 1.
+- Chaos engine may cause flakiness — use Playwright auto-wait and clear assertion messages, not blind retries in test code.
+
+## Example contract test shape
+
+```ts
+const response = await authRequest.login(demoUser.email, demoUser.password);
+expectResponseStatus(response, 200, 'Login API response');
+const body = await response.json();
+await expectResponseMatchesOpenApi({
+  request,
+  body,
+  path: routes.api.login,
+  method: 'post',
+  statusCode: 200,
+  context: 'Login API response body',
+});
+// + business assertions on body.token, etc.
+```
+
+## Tags
+
+Use `@api`, `@contract` for contract tests.

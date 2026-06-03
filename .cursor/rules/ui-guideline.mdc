@@ -1,0 +1,63 @@
+---
+description: UI tests, Page Objects, locators, auth storage state, and network sync for Rolnopol
+globs: tests/ui/**,tests/setup/**,tests/integration/**,src/pages/**
+alwaysApply: false
+---
+
+# UI guidelines
+
+Applies when editing UI tests, setup, integration mocks, or Page Objects. Reference: `@docs/test_framework_architecture_.md` (§11–14, §23–24).
+
+## Application context
+
+- Rolnopol frontend is an **MPA** (separate `.html` pages), vanilla JS — no React/Vue.
+- Prefer `data-testid`, `id`, and semantic locators over layout-dependent CSS.
+
+## Locator priority
+
+1. `getByTestId`
+2. `getByRole`
+3. `getByLabel`
+4. `getByText`
+5. Stable CSS / `#id` (only when nothing better exists)
+
+**Avoid:** XPath, long CSS chains, `nth()` without reason, `force: true`, hard waits (`page.waitForTimeout`), selectors in spec files.
+
+## Page Object Model
+
+- One page class per screen in `src/pages/`.
+- Expose **user actions** (`open`, `loginAs`, `buyFirstAvailableOffer`) and **assertions** (`expectLoaded`, `expectInvalidLoginError`).
+- Tests describe **business behavior**, not DOM structure.
+- If `data-testid` is missing in the app, use the next locator in the priority list and keep it inside the Page Object.
+
+## Auth and project layout
+
+- **Public login tests:** `tests/ui/public/` — no storage state.
+- **Authenticated business tests:** `tests/ui/authenticated/` — depend on setup project + `storageState` from `.auth/user.json`.
+- **Setup:** `tests/setup/auth.setup.ts` logs in once and saves storage state; `.auth/*` is gitignored.
+- Navigate via `routes.pages.*` from `src/config/routes.ts`.
+
+## Network synchronization
+
+For actions that trigger API calls (e.g. marketplace buy):
+
+```ts
+const [buyResponse] = await Promise.all([
+  page.waitForResponse(
+    (r) => r.url().includes('/api/v1/marketplace/buy') && r.request().method() === 'POST',
+  ),
+  marketplacePage.buyFirstAvailableOffer(),
+]);
+```
+
+Then assert status **and** a **visible UI outcome** — never network status alone.
+
+## Integration / mocking (`tests/integration/`)
+
+- Use `page.route()` for error/empty/slow API — **not** for happy paths coverable by real backend.
+- Verify: no crash, loading stops, error/empty state visible.
+- Document unstable app behavior in `docs/testing-observations.md` if needed.
+
+## Tags
+
+Use `@ui` and `@smoke` where appropriate. Do not tag API-only specs as UI.

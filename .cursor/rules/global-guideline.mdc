@@ -1,0 +1,105 @@
+---
+description: Rolnopol Playwright framework — global conventions, coding standards, commits, execution, quality gates
+alwaysApply: true
+---
+
+# Global guidelines — Rolnopol Playwright framework
+
+This repo is a **Playwright + TypeScript** test automation framework for **Rolnopol** (external app under test). Deep reference: `@docs/test_framework_architecture_.md`, `@docs/rolnopol_context.md`, `@docs/coding-standards.md`.
+
+## Boundaries
+
+- Keep the framework **small and focused** — medium-light, recruitment-quality, not enterprise over-engineering.
+- **Do not copy** Rolnopol application source code. Treat Rolnopol as an external system.
+- App runs via Docker: `jaktestowac/rolnopol:1.0.24` on port 3000 (`docker compose up -d`).
+
+## Stack and patterns
+
+- **UI:** Page Object Model; selectors only in `src/pages/`.
+- **API:** Request classes in `src/api/requests/`; assertions in `src/api/assertions/`.
+- **Contracts:** OpenAPI at `OPENAPI_URL` is the source of truth for API response validation.
+- **Data:** Static users in `src/test-data/`; factories in `src/factories/` for generated/invalid payloads.
+- **Routes:** All paths in `src/config/routes.ts`. API routes are relative to `/api/v1` (use with `API_BASE_URL` from `config/env.config.ts`).
+
+## Environment
+
+- No hardcoded URLs or credentials in tests — use `config/env.config.ts` and `.env` (from `.env-template`).
+- OpenAPI URL is configurable via env.
+
+## Coding standards (summary)
+
+Full detail: `@docs/coding-standards.md`. UI/API specifics: `@ui-guideline`, `@api-guideline`.
+
+- **Files:** kebab-case; suffixes `*.page.ts`, `*.request.ts`, `*.factory.ts`, `*.assertion.ts`, `*.mock.ts`, `*.spec.ts`, `*.setup.ts` — no `utils.ts`, `helpers.ts`, `test1.spec.ts`.
+- **Naming:** `PascalCase` types; `camelCase` vars/methods (`verbNoun`); intent-clear names (not `res`, `x`, vague `data`).
+- **Tests:** Arrange → Act → Assert; one main behavior; titles describe business behavior; tags `@ui`, `@api`, `@mock`, `@contract`, `@smoke`, `@business`.
+- **TypeScript:** strict, no `any`; `unknown` then validate; explicit return types in `src/` and `config/` only.
+- **Imports:** `@src/*`, `@config/*` — avoid deep `../../../`.
+- **Hygiene:** no `test.only`, `console.log`, hard waits, unused code, TS/ESLint issues; tests independent of order; `workers: 1`, `fullyParallel: false`.
+
+## Conventional commits
+
+Based on [Conventional Commits Cheatsheet](https://gist.github.com/qoomon/5dfcdf8eec66a051ecd85625518cfd13). See `@docs/coding-standards.md` §28.
+
+Format:
+
+```txt
+<type>(<optional scope>): <description>
+```
+
+**Description:** imperative present tense, lowercase, no trailing period (e.g. `add login page object`, not `Added login`).
+
+**Types (pick first match):** `fix` (bug) → `feat` (behavior/UI/API change) → `test` → `style` → `docs` → `build` (deps, tooling) → `ops` (CI/CD, Docker) → `chore` (maintenance) → `perf` (performance) → else `refactor`.
+
+**Scopes (optional, project areas — not issue IDs):** `ui`, `api`, `pages`, `config`, `e2e`, `ci`, `deps`, `docs`.
+
+**Examples:**
+
+```txt
+test(ui): add positive login spec
+feat(api): add OpenAPI response validation helper
+fix(pages): use stable test id for marketplace buy button
+docs: add coding standards
+build(ci): add GitHub Actions workflow
+chore: init
+```
+
+Breaking changes: `feat(api)!: ...` or footer `BREAKING CHANGE: ...`. Prefer small, logical commits.
+
+## Rolnopol stability (read before running tests)
+
+- JSON-file persistence, rate limiting, chaos engine, intentional bugs — prefer **stable** runs over speed.
+- Target config (when implemented): Chromium only, `workers: 1`, `fullyParallel: false`, CI retries.
+- If `playwright.config.ts` still differs from the architecture doc, **align toward the doc** when implementing.
+
+## Avoid at the start
+
+Complex fixture chains, multiple browsers, random data everywhere, hard waits, `test.only`, unnecessary new dependencies.
+
+## Running tests
+
+```bash
+npm run app:start    # if script exists
+npm run app:wait     # wait for http://localhost:3000
+npm run test         # full suite
+npm run test:ui      # UI only
+npm run test:api     # API only
+```
+
+Tags: `@smoke`, `@ui`, `@api`, `@contract`, `@mock`.
+
+## Quality gates
+
+- ESLint uses `eslint-plugin-prettier` so formatting is enforced in lint, not only via Prettier CLI.
+- After code changes: `npm run quality:quick` (lint, format check, typecheck).
+- Before considering work done: `npm run quality` (includes tests when available).
+
+## Where to look
+
+| Task | Doc / rule |
+|------|------------|
+| Naming, types, imports, commits (detail) | `@docs/coding-standards.md` |
+| UI tests, POM, locators | `@ui-guideline` |
+| API tests, OpenAPI | `@api-guideline` |
+| Full structure & examples | `@docs/test_framework_architecture_.md` |
+| App quirks (chaos, 429, MPA) | `@docs/rolnopol_context.md` |
