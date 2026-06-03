@@ -30,9 +30,9 @@ This repo is a **Playwright + TypeScript** test automation framework for **Rolno
 
 Full detail: `@docs/coding-standards.md`. UI/API specifics: `@ui-guideline`, `@api-guideline`.
 
-- **Files:** kebab-case; suffixes `*.page.ts`, `*.request.ts`, `*.factory.ts`, `*.assertion.ts`, `*.mock.ts`, `*.spec.ts`, `*.setup.ts` — no `utils.ts`, `helpers.ts`, `test1.spec.ts`.
+- **Files:** kebab-case; suffixes `*.page.ts`, `*.request.ts`, `*.factory.ts`, `*.assertion.ts`, `*.mock.ts`, `*.fixtures.ts`, `*.spec.ts`, `*.setup.ts` — no `utils.ts`, `helpers.ts`, `test1.spec.ts`.
 - **Naming:** `PascalCase` types; `camelCase` vars/methods (`verbNoun`); intent-clear names (not `res`, `x`, vague `data`).
-- **Tests:** Arrange → Act → Assert; one main behavior; titles describe business behavior; tags `@ui`, `@api`, `@mock`, `@contract`, `@smoke`, `@business`.
+- **Tests:** Arrange → Act → Assert; one main behavior; titles describe business behavior; tags `@ui`, `@api`, `@mock`, `@contract`, `@smoke`, `@business`, `@logged`, `@non-logged`.
 - **TypeScript:** strict, no `any`; `unknown` then validate; explicit return types in `src/` and `config/` only.
 - **Imports:** `@src/*`, `@config/*` — avoid deep `../../../`.
 - **Hygiene:** no `test.only`, `console.log`, hard waits, unused code, TS/ESLint issues; tests independent of order; `workers: 1`, `fullyParallel: false`.
@@ -91,7 +91,7 @@ Tags: `@smoke`, `@ui`, `@api`, `@contract`, `@mock`.
 Flaky check (**recommended**, app must be running):
 
 ```bash
-npm run test:flaky -- tests/ui/public/login-positive.spec.ts
+npm run test:flaky -- tests/ui/integration/login.spec.ts
 ```
 
 - **Required:** user or agent passes **one spec file path** after `--`. Bare `npm run test:flaky` exits with an error and does **not** run the full suite.

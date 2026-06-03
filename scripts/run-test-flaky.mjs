@@ -6,7 +6,7 @@ if (!specPath) {
   process.stderr.write(
     "test:flaky requires a spec path (does not run the full suite).\n" +
       "Usage: npm run test:flaky -- <path-to-spec>\n" +
-      "Example: npm run test:flaky -- tests/ui/public/login-positive.spec.ts\n",
+      "Example: npm run test:flaky -- tests/ui/integration/login.spec.ts\n",
   );
   process.exit(1);
 }

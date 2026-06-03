@@ -1,6 +1,6 @@
 ---
 description: UI tests, Page Objects, locators, auth storage state, and network sync for Rolnopol
-globs: tests/ui/**,tests/setup/**,tests/integration/**,src/pages/**
+globs: tests/ui/**,tests/setup/**,src/pages/**,src/fixtures/**
 alwaysApply: false
 ---
 
@@ -26,14 +26,24 @@ Applies when editing UI tests, setup, integration mocks, or Page Objects. Refere
 ## Page Object Model
 
 - One page class per screen in `src/pages/`.
-- Expose **user actions** (`open`, `loginAs`, `buyFirstAvailableOffer`) and **assertions** (`expectLoaded`, `expectInvalidLoginError`).
+- Expose **user actions** (`open`, `login`, `buyFirstAvailableOffer`) and **locators** for assertions (`loginError`, etc.).
+- Keep assertions in specs (or fixtures), not custom `expect*` methods on page classes.
 - Tests describe **business behavior**, not DOM structure.
+- Import extended test from `@src/fixtures/merge.fixtures` when using page fixtures.
 - If `data-testid` is missing in the app, use the next locator in the priority list and keep it inside the Page Object.
 
-## Auth and project layout
+## Test folders and auth tags
 
-- **Public login tests:** `tests/ui/public/` — no storage state.
-- **Authenticated business tests:** `tests/ui/authenticated/` — depend on setup project + `storageState` from `.auth/user.json`.
+```
+tests/
+  setup/           # auth.setup.ts only
+  ui/{smoke,integration,e2e}/
+  api/{smoke,integration,e2e}/
+```
+
+- **Folder** = category (`e2e`, `smoke`, `integration`). **Tags** = cross-cutting filters.
+- `@non-logged` — no storage state (`chromium-public` project).
+- `@logged` — uses `storageState` from `.auth/user.json` (`chromium-logged` project, depends on `setup`).
 - **Setup:** `tests/setup/auth.setup.ts` logs in once and saves storage state; `.auth/*` is gitignored.
 - Navigate via `routes.pages.*` from `src/config/routes.ts`.
 
@@ -52,7 +62,7 @@ const [buyResponse] = await Promise.all([
 
 Then assert status **and** a **visible UI outcome** — never network status alone.
 
-## Integration / mocking (`tests/integration/`)
+## Integration / mocking (`tests/ui/integration/`)
 
 - Use `page.route()` for error/empty/slow API — **not** for happy paths coverable by real backend.
 - Verify: no crash, loading stops, error/empty state visible.
@@ -60,4 +70,4 @@ Then assert status **and** a **visible UI outcome** — never network status alo
 
 ## Tags
 
-Use `@ui` and `@smoke` where appropriate. Do not tag API-only specs as UI.
+Use `@ui`, `@smoke`, `@logged`, `@non-logged`, `@mock` where appropriate. Do not tag API-only specs as UI.

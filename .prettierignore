@@ -4,4 +4,5 @@ test-results
 blob-report
 .auth
 playwright/.cache
+.playwright-mcp
 package-lock.json

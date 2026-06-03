@@ -1,6 +1,6 @@
 ---
 description: Agent role — UI Implementation. Implement UI specs and Page Objects following discovery notes and ui-guideline.
-globs: tests/ui/**,tests/setup/**,tests/integration/**,src/pages/**,src/mocks/**
+globs: tests/ui/**,tests/setup/**,src/pages/**,src/mocks/**,src/fixtures/**
 alwaysApply: false
 ---
 
@@ -29,7 +29,7 @@ Implement UI test specs, Page Objects, and integration/mock specs. Always check 
 - Arrange / Act / Assert structure in every test.
 - `waitForResponse` for actions that trigger API calls (see `@ui-guideline` network sync pattern).
 - Assert **visible UI outcomes**, not just network status.
-- Tags: `@ui`, `@smoke`, `@business`, `@mock` as defined in `@docs/implementation-todo.md`.
+- Tags: `@ui`, `@smoke`, `@business`, `@mock`, `@logged`, `@non-logged` as defined in `@docs/implementation-todo.md`.
 
 ## Boundaries
 

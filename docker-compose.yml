@@ -1,5 +1,5 @@
 services:
   rolnopol:
-    image: jaktestowac/rolnopol:1.0.24
+    image: jaktestowac/rolnopol:1.25.0
     ports:
       - "3000:3000"

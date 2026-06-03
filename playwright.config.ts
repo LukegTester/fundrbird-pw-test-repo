@@ -36,15 +36,17 @@ export default defineConfig({
 
     {
       name: "chromium-public",
-      testIgnore: ["tests/ui/authenticated/**/*.spec.ts"],
+      testMatch: "tests/ui/**/*.spec.ts",
+      grep: /@non-logged/,
       use: {
         ...devices["Desktop Chrome"],
       },
     },
 
     {
-      name: "chromium-authenticated",
-      testMatch: ["tests/ui/authenticated/**/*.spec.ts"],
+      name: "chromium-logged",
+      testMatch: "tests/ui/**/*.spec.ts",
+      grep: /@logged/,
       dependencies: ["setup"],
       use: {
         ...devices["Desktop Chrome"],
