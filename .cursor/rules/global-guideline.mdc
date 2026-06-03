@@ -88,11 +88,34 @@ npm run test:api     # API only
 
 Tags: `@smoke`, `@ui`, `@api`, `@contract`, `@mock`.
 
+Flaky check (**recommended**, app must be running):
+
+```bash
+npm run test:flaky -- tests/ui/public/login-positive.spec.ts
+```
+
+- **Required:** user or agent passes **one spec file path** after `--`. Bare `npm run test:flaky` exits with an error and does **not** run the full suite.
+- Runs `playwright test <path> --repeat-each=10 --retries=0` (run with `CI` unset when possible).
+- Use a single new or changed spec file, not a directory.
+- Document instability in `docs/testing-observations.md` instead of adding hard waits.
+
 ## Quality gates
 
 - ESLint uses `eslint-plugin-prettier` so formatting is enforced in lint, not only via Prettier CLI.
-- After code changes: `npm run quality:quick` (lint, format check, typecheck).
+- After general code changes: `npm run quality:quick` (lint, format check, typecheck).
+- If `npm run lint` fails due to formatting: run `npm run format`, then re-run `npm run lint` and fix any remaining issues.
 - Before considering work done: `npm run quality` (includes tests when available).
+
+## After creating or changing tests
+
+Agents **must** verify the change before marking the task done:
+
+1. `npm run lint` — on formatting failures, run `npm run format` and re-run lint.
+2. `npm run typecheck`
+3. Run the affected test(s) with the app up (`npm run app:start`, `npm run app:wait`, then `npm test` or a targeted spec path) and confirm they pass.
+4. **Recommended:** `npm run test:flaky -- <path-to-spec>` — path is mandatory; note flakiness in `docs/testing-observations.md`.
+
+Pre-commit (`quality:quick`) does not run Playwright tests — run tests explicitly when working on specs.
 
 ## Where to look
 

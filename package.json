@@ -10,6 +10,7 @@
     "test:ui": "playwright test tests/ui",
     "test:api": "playwright test tests/api",
     "test:integration": "playwright test tests/integration",
+    "test:flaky": "node scripts/run-test-flaky.mjs",
     "smoke": "playwright test --grep \"@smoke\"",
     "api": "playwright test --grep \"@api\"",
     "ui": "playwright test --grep \"@ui\"",
