@@ -1,10 +1,12 @@
+import path from "path";
 import { defineConfig, devices } from "@playwright/test";
 import { BASE_URL } from "./config/env.config";
 
-export const authFile = ".auth/user.json";
+export const STORAGE_STATE = path.join(__dirname, "tmp/session.json");
 
 export default defineConfig({
   testDir: "./tests",
+  globalSetup: require.resolve("./config/global.setup.ts"),
 
   timeout: 60_000,
 
@@ -30,11 +32,6 @@ export default defineConfig({
 
   projects: [
     {
-      name: "setup",
-      testMatch: /.*\.setup\.ts/,
-    },
-
-    {
       name: "chromium-public",
       testMatch: "tests/ui/**/*.spec.ts",
       grep: /@non-logged/,
@@ -44,13 +41,19 @@ export default defineConfig({
     },
 
     {
+      name: "setup",
+      testMatch: /.*\.setup\.ts/,
+      dependencies: ["chromium-public"],
+    },
+
+    {
       name: "chromium-logged",
       testMatch: "tests/ui/**/*.spec.ts",
       grep: /@logged/,
       dependencies: ["setup"],
       use: {
         ...devices["Desktop Chrome"],
-        storageState: authFile,
+        storageState: STORAGE_STATE,
       },
     },
   ],

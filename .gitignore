@@ -4,9 +4,9 @@ docs/implementation-todo.md
 # Environment
 .env
 
-# Auth storage state
-.auth/*
-!.auth/.gitkeep
+# Temporary files (storage state, etc.)
+tmp/*
+!tmp/.gitkeep
 
 # Playwright
 node_modules/

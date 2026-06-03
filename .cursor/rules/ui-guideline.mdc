@@ -47,6 +47,12 @@ tests/
 - **Setup:** `tests/setup/auth.setup.ts` logs in once and saves storage state; `.auth/*` is gitignored.
 - Navigate via `routes.pages.*` from `src/config/routes.ts`.
 
+## Assertions
+
+- **Always use positive matchers.** Prefer `toBeHidden()` over `.not.toBeVisible()`, `toBeDisabled()` over `.not.toBeEnabled()`, etc.
+- **Exact strings over regex.** Use `toContainText("Purchase completed successfully!")` instead of `toContainText(/purchase completed/i)` — exact strings catch regressions in copy; use regex only when partial/case-insensitive matching is genuinely needed.
+- ESLint enforces `playwright/no-negated-matchers: error` — a negated matcher will fail the quality gate.
+
 ## Network synchronization
 
 For actions that trigger API calls (e.g. marketplace buy):

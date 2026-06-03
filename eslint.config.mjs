@@ -25,6 +25,7 @@ export default tseslint.config(
       "playwright/no-wait-for-timeout": "error",
       "playwright/no-force-option": "warn",
       "playwright/expect-expect": "error",
+      "playwright/no-negated-matchers": "error",
     },
   },
   {
