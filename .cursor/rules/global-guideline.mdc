@@ -117,10 +117,22 @@ Agents **must** verify the change before marking the task done:
 
 Pre-commit (`quality:quick`) does not run Playwright tests — run tests explicitly when working on specs.
 
+## Agent roles
+
+Before implementation, activate the relevant agent role rule. Each role defines workflow, responsibilities, and boundaries:
+
+| Role | Rule | When to use |
+|------|------|-------------|
+| Test Discovery | `@agent-test-discovery` | Exploring a flow before coding |
+| UI Implementation | `@agent-ui-implementation` | Implementing UI specs and Page Objects |
+| API Contract | `@agent-api-contract` | Implementing API request classes and contract tests |
+| Quality Gate | `@agent-quality-gate` | Running quality checks after each slice |
+
 ## Where to look
 
 | Task | Doc / rule |
 |------|------------|
+| Implementation order, agent roles, vertical slices | `@docs/implementation-todo.md` |
 | Naming, types, imports, commits (detail) | `@docs/coding-standards.md` |
 | UI tests, POM, locators | `@ui-guideline` |
 | API tests, OpenAPI | `@api-guideline` |

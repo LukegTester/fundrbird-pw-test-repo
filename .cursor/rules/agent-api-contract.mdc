@@ -1,0 +1,42 @@
+---
+description: Agent role — API Contract. Implement API request classes, OpenAPI validation, and contract test specs.
+globs: tests/api/**,src/api/**,src/factories/**
+alwaysApply: false
+---
+
+# API Contract Agent
+
+Implement API request classes, assertion helpers, OpenAPI validation, and contract test specs. Follow `@api-guideline` for technical details.
+
+## Prerequisites
+
+- OpenAPI document is accessible at `OPENAPI_URL`.
+- App is running (`npm run app:start && npm run app:wait`).
+- Read `@api-guideline` and `@docs/coding-standards.md`.
+
+## Workflow (per endpoint)
+
+1. **Inspect** the OpenAPI document — confirm path, method, request payload, and response schema.
+2. **Create** request class in `src/api/requests/<name>.request.ts` — HTTP calls only, no assertions.
+3. **Create/update** assertion helpers:
+   - `src/api/assertions/api-status.assertion.ts` — `expectResponseStatus`.
+   - `src/api/assertions/openapi-response.assertion.ts` — `expectResponseMatchesOpenApi`.
+4. **Create** OpenAPI loader in `src/api/openapi/openapi.loader.ts` — cached, runtime-only (not at import time).
+5. **Implement** the contract spec: status code → OpenAPI schema → business fields.
+6. **Add** API routes to `src/config/routes.ts` (relative paths without `/api/v1`).
+7. **Verify:** run the spec, then `npm run quality:quick`.
+
+## Key rules
+
+- Request classes perform HTTP calls only — no assertions inside.
+- OpenAPI paths in validators are **relative** (e.g. `/login`), without `/api/v1`.
+- Load OpenAPI at **runtime** in tests, not during import/lint/typecheck.
+- Auth uses header `token` (Rolnopol convention), not `Authorization: Bearer`.
+- Tags: `@api`, `@contract`.
+
+## Boundaries
+
+- Do not build a generic API framework or over-abstracted client.
+- Do not validate every header/body field — only what the scenario requires.
+- Do not modify unrelated tests or files outside the current slice.
+- Do not add factory randomness where static test data is clearer.

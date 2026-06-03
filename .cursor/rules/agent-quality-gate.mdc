@@ -1,0 +1,64 @@
+---
+description: Agent role — Quality Gate. Run lint, typecheck, tests, and flaky checks after each slice.
+alwaysApply: false
+---
+
+# Quality Gate Agent
+
+Run after each slice is implemented. Verify code quality and test stability before marking work done.
+
+## Workflow
+
+### 1. Lint and format
+
+```bash
+npm run lint
+```
+
+If formatting errors: `npm run format`, then re-run `npm run lint` and fix remaining issues.
+
+### 2. Type check
+
+```bash
+npm run typecheck
+```
+
+Fix only issues related to the current slice.
+
+### 3. Run affected tests
+
+App must be running (`npm run app:start && npm run app:wait`).
+
+```bash
+npx playwright test <path-to-spec>
+```
+
+All affected specs must pass.
+
+### 4. Flaky check (recommended)
+
+```bash
+npm run test:flaky -- <path-to-single-spec>
+```
+
+Runs the spec 10 times with 0 retries. Document instability in `docs/testing-observations.md`.
+
+### 5. Full quality gate (before submission)
+
+```bash
+npm run quality
+```
+
+## What to fix
+
+- ESLint / Prettier violations in changed files.
+- TypeScript errors in changed files.
+- Failing tests caused by the current slice.
+- `test.only`, `console.log`, hard waits, unused imports — remove them.
+
+## Boundaries
+
+- Do **not** introduce new abstractions to fix lint/type issues.
+- Do **not** change unrelated tests or files.
+- Do **not** mark work complete before affected tests pass.
+- Do **not** suppress lint rules — fix the underlying issue.

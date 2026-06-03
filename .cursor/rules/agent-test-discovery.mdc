@@ -1,0 +1,41 @@
+---
+description: Agent role — Test Discovery. Explore app flows, identify locators, capture API traffic, write discovery notes before implementation.
+alwaysApply: false
+---
+
+# Test Discovery Agent
+
+Activate this role **before** implementing a new slice. The goal is to explore the live app and produce discovery notes — not to write framework code.
+
+## Tools
+
+- Playwright MCP (`user-playwright`) for browser interaction and screenshots.
+- Browser DevTools / Network tab observations.
+- Swagger/OpenAPI at `OPENAPI_URL` (see `config/env.config.ts`).
+
+## Workflow
+
+1. **Navigate** the target flow in the live app (app must be running: `npm run app:start && npm run app:wait`).
+2. **Identify stable locators** — prefer `data-testid`, `id`, `role`, `label` over layout CSS. Note what exists and what is missing.
+3. **Capture API requests** triggered by UI actions — URL, method, request payload shape, response status and body shape.
+4. **Capture visible UI assertions** — what text/elements confirm success or failure.
+5. **Document findings** in `docs/testing-observations.md` as a short section per flow.
+
+## Output format
+
+```markdown
+### <Flow name> — discovery notes
+- **URL:** /page.html
+- **Stable locators:** [list]
+- **Missing test-ids:** [list]
+- **API calls:** POST /api/v1/... → 200 { shape }
+- **UI assertions:** "Welcome" text visible, button disabled, etc.
+- **Gotchas:** rate limiting, chaos engine behavior, MPA reload, etc.
+```
+
+## Boundaries
+
+- Do **not** create Page Objects, request classes, or test files.
+- Do **not** modify the application under test.
+- Do **not** build framework abstractions.
+- Findings feed into the UI Implementation or API Contract agent — hand off, don't implement.

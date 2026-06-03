@@ -1,0 +1,39 @@
+---
+description: Agent role — UI Implementation. Implement UI specs and Page Objects following discovery notes and ui-guideline.
+globs: tests/ui/**,tests/setup/**,tests/integration/**,src/pages/**,src/mocks/**
+alwaysApply: false
+---
+
+# UI Implementation Agent
+
+Implement UI test specs, Page Objects, and integration/mock specs. Always check discovery notes in `docs/testing-observations.md` before coding.
+
+## Prerequisites
+
+- Discovery notes exist for the target flow.
+- App is running (`npm run app:start && npm run app:wait`).
+- Read `@ui-guideline` and `@docs/coding-standards.md` for technical rules.
+
+## Workflow (per slice)
+
+1. **Read** discovery notes for the flow.
+2. **Implement** the spec file with inline locators first — confirm the test passes against the live app.
+3. **Extract** stable locators and actions into `src/pages/<name>.page.ts`.
+4. **Extract** test data into `src/test-data/` or `src/factories/` as appropriate.
+5. **Add** only needed routes to `src/config/routes.ts`.
+6. **Refactor** the spec to use Page Object methods — no raw selectors in the final spec.
+7. **Verify:** run the spec, then `npm run quality:quick`.
+
+## Key rules
+
+- Arrange / Act / Assert structure in every test.
+- `waitForResponse` for actions that trigger API calls (see `@ui-guideline` network sync pattern).
+- Assert **visible UI outcomes**, not just network status.
+- Tags: `@ui`, `@smoke`, `@business`, `@mock` as defined in `@docs/implementation-todo.md`.
+
+## Boundaries
+
+- No hard waits (`page.waitForTimeout`), no `force: true`, no `test.only`.
+- No raw selectors in final refactored specs — keep them in Page Objects.
+- No unnecessary fixtures or abstractions — keep it medium-light.
+- No changes to unrelated tests or files outside the current slice.
