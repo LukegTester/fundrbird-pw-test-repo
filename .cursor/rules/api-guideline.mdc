@@ -44,8 +44,8 @@ Do not validate every header/body field in every test.
 
 ## Stability
 
-- Fast parallel API calls may hit **429** (rate limit) — default worker count is 1.
-- JSON-file DB: avoid heavy parallel mutation — default worker count is 1.
+- Rolnopol has rate limiting (429) and JSON-file persistence — fast parallel mutation can surface 400/429.
+- The suite runs with `workers: 3` (`playwright.config.ts`) after verifying isolated arrange steps; keep API arrange idempotent and avoid heavy shared-state mutation. Drop workers locally if repeated runs hit 429.
 - Chaos engine may cause flakiness — use Playwright auto-wait and clear assertion messages, not blind retries in test code.
 
 ## Example contract test shape

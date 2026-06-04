@@ -1,8 +1,6 @@
-import path from "path";
 import { defineConfig, devices } from "@playwright/test";
 import { BASE_URL } from "./config/env.config";
-
-export const STORAGE_STATE = path.join(__dirname, "tmp/session.json");
+import { STORAGE_STATE } from "./config/paths";
 
 export default defineConfig({
   testDir: "./tests",

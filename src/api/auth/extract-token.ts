@@ -1,5 +1,5 @@
 import * as fs from "fs";
-import { STORAGE_STATE } from "../../../playwright.config";
+import { STORAGE_STATE } from "@config/paths";
 
 type StorageStateCookie = {
   name: string;
