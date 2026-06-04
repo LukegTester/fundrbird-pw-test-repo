@@ -271,7 +271,7 @@ Keep UI paths and API endpoints in one place.
 
 OpenAPI paths are relative to `/api/v1`, so API routes should not include `/api/v1` directly.
 
-`src/config/routes.ts`:
+`src/routes/routes.ts`:
 
 ```ts
 export const routes = {
@@ -467,7 +467,7 @@ This is better than logging in through UI in every authenticated test.
 ```ts
 import { STORAGE_STATE } from "../../playwright.config";
 import { expect, test as setup } from "@src/fixtures/merge.fixtures";
-import { routes } from "@src/config/routes";
+import { routes } from "@src/routes/routes";
 import { demoUser } from "@src/test-data/users";
 
 setup("authenticate demo user", async ({ loginPage, page }) => {
@@ -548,7 +548,7 @@ Example `src/pages/login.page.ts`:
 
 ```ts
 import { expect, Locator, Page } from "@playwright/test";
-import { routes } from "@src/config/routes";
+import { routes } from "@src/routes/routes";
 
 type LoginCredentials = {
   email: string;
@@ -685,7 +685,7 @@ Example `src/api/requests/auth.request.ts`:
 ```ts
 import { APIRequestContext, APIResponse } from "@playwright/test";
 import { API_BASE_URL } from "@config/env.config";
-import { routes } from "@src/config/routes";
+import { routes } from "@src/routes/routes";
 
 export class AuthRequest {
   constructor(private readonly request: APIRequestContext) {}
@@ -706,7 +706,7 @@ Example `src/api/requests/marketplace.request.ts`:
 ```ts
 import { APIRequestContext, APIResponse } from "@playwright/test";
 import { API_BASE_URL } from "@config/env.config";
-import { routes } from "@src/config/routes";
+import { routes } from "@src/routes/routes";
 
 export class MarketplaceRequest {
   constructor(private readonly request: APIRequestContext) {}
@@ -944,7 +944,7 @@ import { test, expect } from "@playwright/test";
 import { AuthRequest } from "@src/api/requests/auth.request";
 import { expectResponseStatus } from "@src/api/assertions/api-status.assertion";
 import { expectResponseMatchesOpenApi } from "@src/api/assertions/openapi-response.assertion";
-import { routes } from "@src/config/routes";
+import { routes } from "@src/routes/routes";
 import { demoUser } from "@src/test-data/users";
 
 test("user can authenticate through API @api @contract", async ({

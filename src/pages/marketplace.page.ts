@@ -1,5 +1,5 @@
 import type { Locator, Page } from "@playwright/test";
-import { routes } from "@src/config/routes";
+import { routes } from "@src/routes/routes";
 
 export class MarketplacePage {
   readonly page: Page;

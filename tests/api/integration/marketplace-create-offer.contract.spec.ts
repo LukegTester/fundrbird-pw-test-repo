@@ -4,7 +4,7 @@ import { expectResponseStatus } from "@src/api/assertions/api-status.assertion";
 import { expectResponseMatchesOpenApi } from "@src/api/assertions/openapi-response.assertion";
 import { AuthRequest } from "@src/api/requests/auth.request";
 import { MarketplaceRequest } from "@src/api/requests/marketplace.request";
-import { routes } from "@src/config/routes";
+import { routes } from "@src/routes/routes";
 import type { ApiCreateOfferResponseBody } from "@src/models/marketplace.model";
 import { demoUser } from "@src/test-data/users";
 

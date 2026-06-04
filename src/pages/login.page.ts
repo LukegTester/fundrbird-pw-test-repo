@@ -1,5 +1,5 @@
 import type { Locator, Page } from "@playwright/test";
-import { routes } from "@src/config/routes";
+import { routes } from "@src/routes/routes";
 import type { LoginUserModel } from "@src/models/user.model";
 
 export class LoginPage {

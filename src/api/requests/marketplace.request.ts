@@ -1,6 +1,6 @@
 import type { APIRequestContext, APIResponse } from "@playwright/test";
 import { API_BASE_URL } from "@config/env.config";
-import { routes } from "@src/config/routes";
+import { routes } from "@src/routes/routes";
 import type { CreateOfferPayload } from "@src/models/marketplace.model";
 
 export class MarketplaceRequest {

@@ -20,7 +20,7 @@ Implement UI test specs, Page Objects, and integration/mock specs. Always check 
 2. **Implement** the spec file with inline locators first — confirm the test passes against the live app.
 3. **Extract** stable locators and actions into `src/pages/<name>.page.ts`.
 4. **Extract** test data into `src/test-data/` or `src/factories/` as appropriate.
-5. **Add** only needed routes to `src/config/routes.ts`.
+5. **Add** only needed routes to `src/routes/routes.ts`.
 6. **Refactor** the spec to use Page Object methods — no raw selectors in the final spec.
 7. **Verify:** run the spec, then `npm run quality:quick`.
 

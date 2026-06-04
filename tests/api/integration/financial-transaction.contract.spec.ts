@@ -3,7 +3,7 @@ import { expectResponseStatus } from "@src/api/assertions/api-status.assertion";
 import { expectResponseMatchesOpenApi } from "@src/api/assertions/openapi-response.assertion";
 import { AuthRequest } from "@src/api/requests/auth.request";
 import { FinancialRequest } from "@src/api/requests/financial.request";
-import { routes } from "@src/config/routes";
+import { routes } from "@src/routes/routes";
 import type { ApiFinancialTransactionResponseBody } from "@src/models/financial.model";
 import { incomeTransactionPayload } from "@src/test-data/financial-transactions";
 import { demoUser } from "@src/test-data/users";

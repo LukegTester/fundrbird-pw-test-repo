@@ -1,6 +1,6 @@
 import { expect, test } from "@src/fixtures/merge.fixtures";
 import { createUnknownEmailUser } from "@src/factories/auth.factory";
-import { routes } from "@src/config/routes";
+import { routes } from "@src/routes/routes";
 import { demoUser, wrongPasswordUser } from "@src/test-data/users";
 
 test.describe("Verify login", () => {

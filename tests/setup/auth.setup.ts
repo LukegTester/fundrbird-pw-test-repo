@@ -1,6 +1,6 @@
 import { STORAGE_STATE } from "../../playwright.config";
 import { expect, test as setup } from "@src/fixtures/merge.fixtures";
-import { routes } from "@src/config/routes";
+import { routes } from "@src/routes/routes";
 import { demoUser } from "@src/test-data/users";
 
 setup("authenticate as demo user", async ({ loginPage, page }) => {

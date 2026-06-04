@@ -901,7 +901,7 @@ Good:
 
 ```ts
 import { LoginPage } from "@src/pages/login.page";
-import { routes } from "@src/config/routes";
+import { routes } from "@src/routes/routes";
 import { demoUser } from "@src/test-data/users";
 ```
 

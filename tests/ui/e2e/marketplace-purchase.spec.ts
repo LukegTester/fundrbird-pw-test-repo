@@ -3,7 +3,7 @@ import { createOfferWithSellableItem } from "@src/api/helpers/find-sellable-item
 import { expectResponseStatus } from "@src/api/assertions/api-status.assertion";
 import { FinancialRequest } from "@src/api/requests/financial.request";
 import { MarketplaceRequest } from "@src/api/requests/marketplace.request";
-import { routes } from "@src/config/routes";
+import { routes } from "@src/routes/routes";
 import { financialAccountZeroBalance } from "@src/mocks/financial.mock";
 import { incomeTransactionPayload } from "@src/test-data/financial-transactions";
 

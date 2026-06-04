@@ -19,7 +19,7 @@ This repo is a **Playwright + TypeScript** test automation framework for **Rolno
 - **API:** Request classes in `src/api/requests/`; assertions in `src/api/assertions/`.
 - **Contracts:** OpenAPI at `OPENAPI_URL` is the source of truth for API response validation.
 - **Data:** Static users in `src/test-data/`; factories in `src/factories/` for generated/invalid payloads.
-- **Routes:** All paths in `src/config/routes.ts`. API routes are relative to `/api/v1` (use with `API_BASE_URL` from `config/env.config.ts`).
+- **Routes:** All paths in `src/routes/routes.ts`. API routes are relative to `/api/v1` (use with `API_BASE_URL` from `config/env.config.ts`).
 
 ## Environment
 

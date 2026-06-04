@@ -23,7 +23,7 @@ Implement API request classes, assertion helpers, OpenAPI validation, and contra
    - `src/api/assertions/openapi-response.assertion.ts` — `expectResponseMatchesOpenApi`.
 4. **Create** OpenAPI loader in `src/api/openapi/openapi.loader.ts` — cached, runtime-only (not at import time).
 5. **Implement** the contract spec: status code → OpenAPI schema → business fields.
-6. **Add** API routes to `src/config/routes.ts` (relative paths without `/api/v1`).
+6. **Add** API routes to `src/routes/routes.ts` (relative paths without `/api/v1`).
 7. **Verify:** run the spec, then `npm run quality:quick`.
 
 ## Key rules

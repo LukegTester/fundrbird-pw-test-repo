@@ -45,7 +45,7 @@ tests/
 - `@non-logged` — no storage state (`chromium-non-logged` project).
 - `@logged` — uses `storageState` from `tmp/session.json` (`chromium-logged` project, depends on `setup`).
 - **Setup:** `tests/setup/auth.setup.ts` logs in once and saves storage state; `tmp/*` is gitignored (except `tmp/.gitkeep`).
-- Navigate via `routes.pages.*` from `src/config/routes.ts`.
+- Navigate via `routes.pages.*` from `src/routes/routes.ts`.
 
 ## Assertions
 
