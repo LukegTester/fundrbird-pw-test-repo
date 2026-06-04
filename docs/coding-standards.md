@@ -982,7 +982,7 @@ Before final submission, run:
 ```bash
 npm run app:start
 npm run app:wait
-npm run quality
+npm run quality:gate
 npm run app:stop
 ```
 
