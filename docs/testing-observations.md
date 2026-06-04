@@ -50,3 +50,19 @@ Updated slice-by-slice; feeds into implementation decisions.
 - **Flaky note:** purchase test mutates marketplace JSON state; repeated runs may hit 400 (insufficient funds after prior purchases) or 429 (rate limit). Fresh Docker (`npm run app:stop && npm run app:start`) resets state; CI starts clean each run
 
 ---
+
+## Slice 3 — Auth login API contract (v1.25.0)
+
+### OpenAPI document — discovery notes
+
+- **URL:** `http://localhost:3000/schema/openapi.json` (`OPENAPI_URL`)
+- **Version:** OpenAPI 3.0.0
+- **Login path key:** `/login` (relative, no `/api/v1` prefix) — matches `routes.api.login`
+- **Operation:** `POST /login` with request body `$ref: #/components/schemas/UserLogin` (`email`, `password`)
+- **200 response:** `content.application/json.schema` → `$ref: #/components/schemas/LoginResponse`
+- **Actual API URL:** `POST ${API_BASE_URL}/login` → `http://localhost:3000/api/v1/login`
+- **200 body shape (live):** `{ success, timestamp, data: { user: { email, ... }, token, expiration, loginTime }, message }`
+- **Business assertions:** use `body.data.user.email` and `body.data.token` (email is nested under `user`, not flat on `data`)
+- **Validator:** `openapi-response-validator` accepts OAS3 `responses` with `content` + passes `components` for `$ref` resolution
+
+---

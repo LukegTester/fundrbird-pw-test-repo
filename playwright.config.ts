@@ -32,7 +32,12 @@ export default defineConfig({
 
   projects: [
     {
-      name: "chromium-public",
+      name: "api",
+      testMatch: "tests/api/**/*.spec.ts",
+    },
+
+    {
+      name: "chromium-non-logged",
       testMatch: "tests/ui/**/*.spec.ts",
       grep: /@non-logged/,
       use: {
@@ -43,7 +48,7 @@ export default defineConfig({
     {
       name: "setup",
       testMatch: /.*\.setup\.ts/,
-      dependencies: ["chromium-public"],
+      dependencies: ["api", "chromium-non-logged"],
     },
 
     {

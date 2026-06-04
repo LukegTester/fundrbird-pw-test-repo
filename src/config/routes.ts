@@ -6,8 +6,8 @@ export const routes = {
   },
   api: {
     login: "/login",
-    marketplaceOffers: "/api/v1/marketplace/offers",
-    marketplaceBuy: "/api/v1/marketplace/buy",
-    financialAccount: "/api/v1/financial/account",
+    marketplaceOffers: "/marketplace/offers",
+    marketplaceBuy: "/marketplace/buy",
+    financialAccount: "/financial/account",
   },
 } as const;

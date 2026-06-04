@@ -51,7 +51,7 @@ tests/
 
 - **Always use positive matchers.** Prefer `toBeHidden()` over `.not.toBeVisible()`, `toBeDisabled()` over `.not.toBeEnabled()`, etc.
 - **Exact strings over regex.** Use `toContainText("Purchase completed successfully!")` instead of `toContainText(/purchase completed/i)` — exact strings catch regressions in copy; use regex only when partial/case-insensitive matching is genuinely needed.
-- ESLint enforces `playwright/no-negated-matchers: error` — a negated matcher will fail the quality gate.
+- ESLint enforces `playwright/no-useless-not: error` — a negated matcher will fail the quality gate.
 
 ## Network synchronization
 
