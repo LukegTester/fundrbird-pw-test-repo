@@ -1,13 +1,31 @@
 import { expect, test } from "@src/fixtures/merge.fixtures";
+import { createOfferWithSellableItem } from "@src/api/helpers/find-sellable-item";
+import { expectResponseStatus } from "@src/api/assertions/api-status.assertion";
+import { FinancialRequest } from "@src/api/requests/financial.request";
+import { MarketplaceRequest } from "@src/api/requests/marketplace.request";
 import { routes } from "@src/config/routes";
 import { financialAccountZeroBalance } from "@src/mocks/marketplace.mock";
+import { incomeTransactionPayload } from "@src/test-data/financial-transactions";
 
 test.describe("Marketplace purchase", () => {
   test(
     "completes a marketplace purchase",
     { tag: ["@ui", "@business", "@smoke", "@logged"] },
-    async ({ marketplacePage, page }) => {
-      // Arrange
+    async ({ marketplacePage, page, request, apiToken }) => {
+      // Arrange — fund account and create a purchasable offer via API
+      const financialRequest = new FinancialRequest(request);
+      const fundResponse = await financialRequest.addTransaction(
+        apiToken,
+        incomeTransactionPayload,
+      );
+      expectResponseStatus(fundResponse, 201, "Fund account via API");
+
+      const marketplaceRequest = new MarketplaceRequest(request);
+      await createOfferWithSellableItem(marketplaceRequest, apiToken, {
+        price: 50,
+        description: "Playwright purchase arrange offer",
+      });
+
       await marketplacePage.open();
       await marketplacePage.waitForOffersLoaded();
       await expect(marketplacePage.firstBuyButton).toBeVisible();

@@ -66,3 +66,54 @@ Updated slice-by-slice; feeds into implementation decisions.
 - **Validator:** `openapi-response-validator` accepts OAS3 `responses` with `content` + passes `components` for `$ref` resolution
 
 ---
+
+## Slice 2b — Financial + marketplace create (v1.25.0)
+
+**Scope:** API contract tests + API arrange for `marketplace-purchase.spec.ts` only (no dedicated UI specs for financial or create-offer flows).
+
+### Financial page — discovery notes
+
+- **URL:** `/financial.html` (requires auth; `@logged` + storage state)
+- **Stable locators:**
+  - Income type: `.type-option[data-type="income"]` (sets hidden `#transaction-type`)
+  - Amount: `#transaction-amount`
+  - Category: `#transaction-category` (options include `general`)
+  - Description: `#transaction-description`
+  - Card (income only): `#transaction-card-number`, `#transaction-cvv` (shown after income selected)
+  - Submit: `#submit-transaction`
+  - History: `#transactions-container` (table rows after load)
+  - Balance: `#current-balance`
+- **Missing test-ids:** transaction form uses `#id` selectors only
+- **API calls:** `POST /api/v1/financial/transactions` with body per `TransactionCreate` OpenAPI schema
+  - Income requires `cardNumber` + `cvv` (write-only, not stored)
+  - Example: `{ type: "income", amount: 5000, description: "...", category: "general", cardNumber: "4242424242424242", cvv: "123" }`
+  - Response: **201** with `data.transaction` (id, amount, balanceAfter, …)
+- **UI assertions:** new row/description visible in `#transactions-container`; optional `role="alert"` notification
+- **Gotchas:** form section `#transaction-form-content` may need income type click before card fields appear
+
+### Marketplace create offer — discovery notes
+
+- **URL:** `/marketplace.html` tab **Create Offer** (`button.tab-button[data-tab="create"]`, panel `#create`)
+- **Stable locators:**
+  - Form: `#createOfferForm`
+  - Item type: `#itemType` (`field` | `animal`)
+  - Item: `#itemId` (populated after type change via API)
+  - Price: `#price`
+  - Description: `#description`
+  - Submit: `.btn-create` / `button[type=submit]` in form
+  - My offers grid: `#myOffers` (tab `data-tab="my-offers"`)
+- **API calls:** `POST /api/v1/marketplace/offers` with `MarketplaceOfferCreate` (`itemType`, `itemId`, `price`, optional `description`)
+  - Response: OpenAPI documents **201 Created**; live app returns **200 OK** with the same body shape — status code inconsistency (app bug). Contract test asserts `200` (actual) and validates body against the `201` schema (documented shape).
+  - **400** common errors: `Cannot sell field with assigned animals`, `Cannot sell animal assigned to a field`, `Item is already offered for sale`
+- **Sellable items:** probe `GET /api/v1/fields` and `GET /api/v1/animals`; use `createOfferWithSellableItem` (cancels active `my-offers` first). Not every item can be listed.
+- **Arrange helper:** `src/api/helpers/find-sellable-item.ts` — used by purchase spec and contract test
+
+### Auth token — discovery notes (Slice 2b)
+
+- **Storage state file:** `tmp/session.json` (see `STORAGE_STATE` in `playwright.config.ts`)
+- **JWT location:** cookie `rolnopolToken` (not localStorage)
+- **Header:** protected API calls use `token: <jwt>` (Rolnopol convention)
+- **Invalidation:** second `POST /login` for the same user returns a new token; **first token returns 403** on protected endpoints — confirmed live
+- **Test strategy:** `chromium-logged` arrange steps must **read token from storage state**, never call `AuthRequest.login()` in the same run after `setup`
+
+---

@@ -13,6 +13,7 @@ export default tseslint.config(
       "blob-report/**",
       "playwright/.cache/**",
       "scripts/**",
+      "tmp/**",
     ],
   },
   eslint.configs.recommended,

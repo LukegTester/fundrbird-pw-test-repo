@@ -6,8 +6,14 @@ export const routes = {
   },
   api: {
     login: "/login",
+    fields: "/fields",
+    animals: "/animals",
     marketplaceOffers: "/marketplace/offers",
+    marketplaceMyOffers: "/marketplace/my-offers",
+    marketplaceOfferById: (offerId: number): string =>
+      `/marketplace/offers/${offerId}`,
     marketplaceBuy: "/marketplace/buy",
     financialAccount: "/financial/account",
+    financialTransactions: "/financial/transactions",
   },
 } as const;
