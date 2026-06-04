@@ -6,9 +6,9 @@ import { routes } from "@src/routes/routes";
 import { demoUser } from "@src/test-data/users";
 import type { ApiLoginResponseBody } from "@src/models/user.model";
 
-test.describe("Auth /api/v1/auth/login API contract", () => {
+test.describe("Login API contract", () => {
   test(
-    "login response matches OpenAPI contract",
+    "Login API response matches the documented contract",
     { tag: ["@api", "@contract"] },
     async ({ request }) => {
       // Arrange

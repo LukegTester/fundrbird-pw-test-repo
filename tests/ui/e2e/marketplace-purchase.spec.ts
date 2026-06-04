@@ -9,7 +9,7 @@ import { incomeTransactionPayload } from "@src/test-data/financial-transactions"
 
 test.describe("Marketplace purchase", () => {
   test(
-    "completes a marketplace purchase",
+    "User can buy an item from the marketplace",
     { tag: ["@ui", "@business", "@smoke", "@logged"] },
     async ({ marketplacePage, page, request, apiToken }) => {
       // Arrange — fund account and create a purchasable offer via API
@@ -60,7 +60,7 @@ test.describe("Marketplace purchase", () => {
    * behaviour.
    */
   test(
-    "0 balance should not allow to purchase (no client-side guard)",
+    "Purchase is not-allowed with zero account balance (known gap: no funds check before checkout)",
     { tag: ["@mock", "@logged", "@integration"] },
     async ({ marketplacePage, page }) => {
       // Arrange

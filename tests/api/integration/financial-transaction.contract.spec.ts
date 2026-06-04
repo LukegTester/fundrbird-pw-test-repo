@@ -8,9 +8,9 @@ import type { ApiFinancialTransactionResponseBody } from "@src/models/financial.
 import { incomeTransactionPayload } from "@src/test-data/financial-transactions";
 import { demoUser } from "@src/test-data/users";
 
-test.describe("Financial /api/v1/financial/transactions API contract", () => {
+test.describe("Financial transactions API contract", () => {
   test(
-    "add income transaction response matches OpenAPI contract",
+    "Adding income returns a response matching the documented contract",
     { tag: ["@api", "@contract", "@logged"] },
     async ({ request }) => {
       // Arrange

@@ -3,9 +3,9 @@ import { createUnknownEmailUser } from "@src/factories/auth.factory";
 import { routes } from "@src/routes/routes";
 import { demoUser, wrongPasswordUser } from "@src/test-data/users";
 
-test.describe("Verify login", () => {
+test.describe("User login", () => {
   test(
-    "logs in with valid credentials",
+    "User can log in with valid credentials",
     { tag: ["@ui", "@smoke", "@integration", "@non-logged"] },
     async ({ loginPage, page }) => {
       // Arrange
@@ -21,7 +21,7 @@ test.describe("Verify login", () => {
   );
 
   test(
-    "rejects valid email and wrong password",
+    "Login is rejected for a valid email with the wrong password",
     { tag: ["@ui", "@integration", "@non-logged"] },
     async ({ loginPage, page }) => {
       // Arrange
@@ -39,7 +39,7 @@ test.describe("Verify login", () => {
   );
 
   test(
-    "rejects unknown email with valid password",
+    "Login is rejected for an unknown email",
     { tag: ["@ui", "@integration", "@non-logged"] },
     async ({ loginPage, page }) => {
       // Arrange

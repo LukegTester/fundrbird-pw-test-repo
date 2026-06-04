@@ -8,9 +8,9 @@ import { routes } from "@src/routes/routes";
 import type { ApiCreateOfferResponseBody } from "@src/models/marketplace.model";
 import { demoUser } from "@src/test-data/users";
 
-test.describe("Marketplace /api/v1/marketplace/offers API contract", () => {
+test.describe("Marketplace offers API contract", () => {
   test(
-    "create offer response matches OpenAPI contract",
+    "Creating an offer returns a response matching the documented contract",
     { tag: ["@api", "@contract", "@logged"] },
     async ({ request }) => {
       // Arrange
