@@ -114,11 +114,12 @@ These can be added later if the suite grows.
 ├── .husky/
 │   └── pre-commit
 │
-├── .auth/
-│   └── .gitkeep
-│
 ├── config/
-│   └── env.config.ts
+│   ├── env.config.ts
+│   └── global.setup.ts
+│
+├── tmp/
+│   └── .gitkeep
 │
 ├── docs/
 │   ├── architecture-plan.md
@@ -129,24 +130,28 @@ These can be added later if the suite grows.
 │   │   ├── assertions/
 │   │   │   ├── api-status.assertion.ts
 │   │   │   └── openapi-response.assertion.ts
-│   │   │
+│   │   ├── auth/
+│   │   │   └── extract-token.ts
+│   │   ├── helpers/
+│   │   │   └── find-sellable-item.ts
 │   │   ├── openapi/
 │   │   │   └── openapi.loader.ts
-│   │   │
 │   │   └── requests/
 │   │       ├── auth.request.ts
+│   │       ├── financial.request.ts
 │   │       └── marketplace.request.ts
 │   │
 │   ├── config/
 │   │   └── routes.ts
 │   │
 │   ├── factories/
-│   │   ├── auth.factory.ts
-│   │   └── marketplace.factory.ts
+│   │   └── auth.factory.ts
+│   │
+│   ├── fixtures/
+│   │   └── merge.fixtures.ts
 │   │
 │   ├── mocks/
-│   │   ├── marketplace.mock.ts
-│   │   └── mock-responses.ts
+│   │   └── financial.mock.ts
 │   │
 │   ├── pages/
 │   │   ├── login.page.ts
@@ -160,19 +165,18 @@ These can be added later if the suite grows.
 │   │   └── auth.setup.ts
 │   │
 │   ├── api/
-│   │   ├── auth-login.contract.spec.ts
-│   │   ├── marketplace-buy.validation.spec.ts
-│   │   └── openapi-documentation.spec.ts
-│   │
-│   ├── integration/
-│   │   └── marketplace-error-state.mock.spec.ts
+│   │   ├── smoke/
+│   │   │   └── auth-login.contract.spec.ts
+│   │   ├── integration/
+│   │   │   ├── financial-transaction.contract.spec.ts
+│   │   │   └── marketplace-create-offer.contract.spec.ts
+│   │   └── e2e/
 │   │
 │   └── ui/
-│       ├── public/
-│       │   ├── login-positive.spec.ts
-│       │   └── login-negative.spec.ts
-│       │
-│       └── authenticated/
+│       ├── smoke/
+│       ├── integration/
+│       │   └── login.spec.ts
+│       └── e2e/
 │           └── marketplace-purchase.spec.ts
 │
 ├── .env-template
@@ -198,7 +202,7 @@ Use Docker Compose with the official Rolnopol Docker image.
 ```yaml
 services:
   rolnopol:
-    image: jaktestowac/rolnopol:1.0.24
+    image: jaktestowac/rolnopol:1.25.0
     ports:
       - "3000:3000"
 ```
@@ -386,23 +390,22 @@ Use storage state for authenticated UI tests, but keep login tests public.
 `playwright.config.ts`:
 
 ```ts
+import path from "path";
 import { defineConfig, devices } from "@playwright/test";
 import { BASE_URL } from "./config/env.config";
 
-export const authFile = ".auth/user.json";
+export const STORAGE_STATE = path.join(__dirname, "tmp/session.json");
 
 export default defineConfig({
   testDir: "./tests",
+  globalSetup: require.resolve("./config/global.setup.ts"),
 
   timeout: 60_000,
+  expect: { timeout: 10_000 },
 
-  expect: {
-    timeout: 10_000,
-  },
-
-  fullyParallel: false,
+  fullyParallel: true,
   retries: process.env.CI ? 1 : 0,
-  workers: 1,
+  workers: 3,
 
   reporter: [
     ["list"],
@@ -417,26 +420,26 @@ export default defineConfig({
   },
 
   projects: [
+    { name: "api", testMatch: "tests/api/**/*.spec.ts" },
+    {
+      name: "chromium-non-logged",
+      testMatch: "tests/ui/**/*.spec.ts",
+      grep: /@non-logged/,
+      use: { ...devices["Desktop Chrome"] },
+    },
     {
       name: "setup",
       testMatch: /.*\.setup\.ts/,
+      dependencies: ["api", "chromium-non-logged"],
     },
-
     {
-      name: "chromium-public",
-      testIgnore: ["tests/ui/authenticated/**/*.spec.ts"],
-      use: {
-        ...devices["Desktop Chrome"],
-      },
-    },
-
-    {
-      name: "chromium-authenticated",
-      testMatch: ["tests/ui/authenticated/**/*.spec.ts"],
+      name: "chromium-logged",
+      testMatch: "tests/ui/**/*.spec.ts",
+      grep: /@logged/,
       dependencies: ["setup"],
       use: {
         ...devices["Desktop Chrome"],
-        storageState: authFile,
+        storageState: STORAGE_STATE,
       },
     },
   ],
@@ -445,13 +448,11 @@ export default defineConfig({
 
 Key decisions:
 
-- public tests do not use storage state,
-- authenticated UI tests use storage state,
-- setup project creates `.auth/user.json`,
-- one worker by default for stability,
+- `@non-logged` UI tests run without storage state; `@logged` tests reuse `tmp/session.json`,
+- setup project runs after `api` and `chromium-non-logged` (see `docs/known-issues.md`),
+- parallel execution with multiple workers — suite is isolated enough; CI starts clean,
 - Chromium only,
-- one retry in CI,
-- no full parallel execution by default.
+- one retry in CI.
 
 ---
 
@@ -464,38 +465,31 @@ This is better than logging in through UI in every authenticated test.
 `tests/setup/auth.setup.ts`:
 
 ```ts
-import { test as setup, expect } from "@playwright/test";
-import { authFile } from "../../playwright.config";
-import { LoginPage } from "@src/pages/login.page";
+import { STORAGE_STATE } from "../../playwright.config";
+import { expect, test as setup } from "@src/fixtures/merge.fixtures";
+import { routes } from "@src/config/routes";
 import { demoUser } from "@src/test-data/users";
 
-setup("authenticate demo user", async ({ page }) => {
-  const loginPage = new LoginPage(page);
-
+setup("authenticate demo user", async ({ loginPage, page }) => {
   await loginPage.open();
-  await loginPage.loginAs(demoUser);
-
-  await loginPage.expectUserIsLoggedIn();
-
-  await page.context().storageState({ path: authFile });
-
-  expect(true, `storage state saved to ${authFile}`).toBe(true);
+  await loginPage.login(demoUser);
+  await expect(page).toHaveURL(new RegExp(`${routes.pages.profile}$`));
+  await page.context().storageState({ path: STORAGE_STATE });
 });
 ```
 
 Add to `.gitignore`:
 
 ```txt
-.auth/*
-!.auth/.gitkeep
+tmp/*
+!tmp/.gitkeep
 ```
 
 Rules:
 
-- login tests stay in `tests/ui/public`,
-- authenticated UI tests stay in `tests/ui/authenticated`,
-- storage state is generated automatically before authenticated tests,
-- `.auth/user.json` is never committed.
+- login tests use `@non-logged` in `tests/ui/integration/`,
+- authenticated UI tests use `@logged` and storage state from setup,
+- `tmp/session.json` is never committed.
 
 ---
 
@@ -1307,18 +1301,18 @@ Default execution:
 
 ```txt
 Chromium only
-workers: 1
-fullyParallel: false
+workers: 3
+fullyParallel: true
 CI retries: 1
 ```
 
-Why:
+Why parallel is enabled:
 
-- Rolnopol has JSON-file persistence,
-- some workflows mutate data,
-- app has rate limiting,
-- app contains intentional bugs and edge cases,
-- stable execution is more important than speed for this assignment.
+- tests use isolated arrange (API funding, offer creation) where needed,
+- CI starts from a clean Docker container each run,
+- faster feedback for reviewers.
+
+Residual risks (shared demo user, JSON persistence, rate limiting) are documented in `docs/known-issues.md`.
 
 ## 28. GitHub Actions
 
@@ -1736,7 +1730,7 @@ TypeScript strict
 Husky quality:quick
 GitHub Actions
 HTML report artifact
-default serial execution
+parallel execution (see docs/known-issues.md)
 ```
 
 This is the recommended balance for the assignment: it demonstrates senior-level framework design without becoming unnecessarily heavy.

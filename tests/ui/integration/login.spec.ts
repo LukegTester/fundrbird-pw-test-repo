@@ -1,10 +1,7 @@
 import { expect, test } from "@src/fixtures/merge.fixtures";
+import { createUnknownEmailUser } from "@src/factories/auth.factory";
 import { routes } from "@src/config/routes";
-import {
-  demoUser,
-  unknownEmailUser,
-  wrongPasswordUser,
-} from "@src/test-data/users";
+import { demoUser, wrongPasswordUser } from "@src/test-data/users";
 
 test.describe("Verify login", () => {
   test(
@@ -46,6 +43,7 @@ test.describe("Verify login", () => {
     { tag: ["@ui", "@integration", "@non-logged"] },
     async ({ loginPage, page }) => {
       // Arrange
+      const unknownEmailUser = createUnknownEmailUser();
       const expectedLoginError = /Invalid credentials/i;
       const expectedLoginUrl = new RegExp(`${routes.pages.login}$`);
 

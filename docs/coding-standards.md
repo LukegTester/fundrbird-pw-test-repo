@@ -200,31 +200,31 @@ Page Objects should hide UI implementation details and expose business/user-leve
 
 Locators should be stored inside Page Object classes, not scattered across tests.
 
-Use `private readonly` for locators.
+For this framework size, `public readonly` locators on Page Objects are acceptable so specs can assert on them directly. Prefer wrapping user actions in methods (`open`, `login`, `buyFirstAvailableOffer`). Add dedicated assertion methods on the Page Object only when they improve readability.
 
 Good:
 
 ```ts
 export class LoginPage {
-  private readonly emailInput: Locator;
-  private readonly passwordInput: Locator;
-  private readonly submitButton: Locator;
-  private readonly errorMessage: Locator;
+  readonly emailInput: Locator;
+  readonly passwordInput: Locator;
+  readonly submitButton: Locator;
+  readonly loginError: Locator;
 
-  constructor(private readonly page: Page) {
-    this.emailInput = page.getByTestId("login-email-input");
-    this.passwordInput = page.getByTestId("login-password-input");
-    this.submitButton = page.getByTestId("login-submit-button");
-    this.errorMessage = page.getByTestId("login-error-message");
+  constructor(readonly page: Page) {
+    this.emailInput = page.getByTestId("email-input");
+    this.passwordInput = page.getByTestId("password-input");
+    this.submitButton = page.getByTestId("login-submit-btn");
+    this.loginError = page.getByRole("alert");
   }
 
   async open(): Promise<void> {
     await this.page.goto(routes.pages.login);
   }
 
-  async loginAs(credentials: LoginCredentials): Promise<void> {
-    await this.emailInput.fill(credentials.email);
-    await this.passwordInput.fill(credentials.password);
+  async login(user: LoginUserModel): Promise<void> {
+    await this.emailInput.fill(user.email);
+    await this.passwordInput.fill(user.password);
     await this.submitButton.click();
   }
 }
@@ -722,24 +722,24 @@ Public login tests should not use storage state.
 Structure:
 
 ```txt
-tests/ui/public
-tests/ui/authenticated
+tests/ui/integration   (@non-logged login specs)
+tests/ui/e2e           (@logged business specs)
 tests/setup/auth.setup.ts
+tmp/session.json       (generated, gitignored)
 ```
 
 Rules:
 
-- login tests verify real login behavior,
-- authenticated tests reuse `.auth/user.json`,
-- `.auth/user.json` must not be committed,
-- setup project should generate storage state before authenticated tests,
+- login tests use `@non-logged` and verify real login behavior,
+- authenticated tests use `@logged` and reuse `tmp/session.json` from the setup project,
+- storage state must not be committed,
 - do not repeat UI login in every authenticated test.
 
 Add to `.gitignore`:
 
 ```txt
-.auth/*
-!.auth/.gitkeep
+tmp/*
+!tmp/.gitkeep
 ```
 
 ---
@@ -965,12 +965,7 @@ If a test mutates backend state, it should either:
 - use a controlled reset/debug endpoint,
 - or clearly document why it is safe.
 
-Because Rolnopol uses JSON-file persistence and has rate limiting, default execution should stay conservative:
-
-```txt
-workers: 1
-fullyParallel: false
-```
+This project runs with parallel workers (`fullyParallel: true`, multiple workers in `playwright.config.ts`) after verifying test isolation. Residual risks (shared demo user, JSON persistence, rate limiting) are documented in `docs/known-issues.md`.
 
 ---
 

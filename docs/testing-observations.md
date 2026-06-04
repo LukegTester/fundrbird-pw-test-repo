@@ -22,7 +22,7 @@ Updated slice-by-slice; feeds into implementation decisions.
 - **API calls:** `POST /api/v1/login` with `{ email, password }` → 200 on success, 401 on invalid creds
 - **Success UI:** redirect to `/profile.html`
 - **Error UI:** stays on `/login.html`; visible text `Invalid credentials` in notification `role="alert"` (both wrong-password and unknown-email cases)
-- **Auth in tests:** `@non-logged` = no storage state; `@logged` = `.auth/user.json` from setup project
+- **Auth in tests:** `@non-logged` = no storage state; `@logged` = `tmp/session.json` from setup project
 - **Gotchas:** after login, `/login.html` redirects to profile until logout; use fresh context for `@non-logged` tests
 
 ---

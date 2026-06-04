@@ -11,7 +11,7 @@ This repo is a **Playwright + TypeScript** test automation framework for **Rolno
 
 - Keep the framework **small and focused** — medium-light, recruitment-quality, not enterprise over-engineering.
 - **Do not copy** Rolnopol application source code. Treat Rolnopol as an external system.
-- App runs via Docker: `jaktestowac/rolnopol:1.0.24` on port 3000 (`docker compose up -d`).
+- App runs via Docker: `jaktestowac/rolnopol:1.25.0` on port 3000 (`docker compose up -d`).
 
 ## Stack and patterns
 
@@ -35,7 +35,7 @@ Full detail: `@docs/coding-standards.md`. UI/API specifics: `@ui-guideline`, `@a
 - **Tests:** Arrange → Act → Assert; one main behavior; titles describe business behavior; tags `@ui`, `@api`, `@mock`, `@contract`, `@smoke`, `@business`, `@logged`, `@non-logged`.
 - **TypeScript:** strict, no `any`; `unknown` then validate; explicit return types in `src/` and `config/` only.
 - **Imports:** `@src/*`, `@config/*` — avoid deep `../../../`.
-- **Hygiene:** no `test.only`, `console.log`, hard waits, unused code, TS/ESLint issues; tests independent of order; `workers: 1`, `fullyParallel: false`.
+- **Hygiene:** no `test.only`, `console.log`, hard waits, unused code, TS/ESLint issues; tests independent of order; parallel execution (`fullyParallel: true`, multiple workers) — see `docs/known-issues.md`.
 
 ## Conventional commits
 
@@ -69,8 +69,7 @@ Breaking changes: `feat(api)!: ...` or footer `BREAKING CHANGE: ...`. Prefer sma
 ## Rolnopol stability (read before running tests)
 
 - JSON-file persistence, rate limiting, chaos engine, intentional bugs — prefer **stable** runs over speed.
-- Target config (when implemented): Chromium only, `workers: 1`, `fullyParallel: false`, CI retries.
-- If `playwright.config.ts` still differs from the architecture doc, **align toward the doc** when implementing.
+- Config: Chromium only, `fullyParallel: true`, multiple workers, CI retries — see `playwright.config.ts` and `docs/known-issues.md`.
 
 ## Avoid at the start
 

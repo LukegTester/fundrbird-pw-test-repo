@@ -31,7 +31,7 @@ test.describe("Marketplace /api/v1/marketplace/offers API contract", () => {
 
       // Assert — status code
       // Note: OpenAPI documents 201 Created; the live app returns 200.
-      // This is an app-side inconsistency documented in testing-observations.md.
+      // This is an app-side inconsistency documented in known-issues.md.
       expectResponseStatus(response, 200, "Create offer API response");
 
       const body = (await response.json()) as ApiCreateOfferResponseBody;

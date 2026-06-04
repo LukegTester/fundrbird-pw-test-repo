@@ -42,9 +42,9 @@ tests/
 ```
 
 - **Folder** = category (`e2e`, `smoke`, `integration`). **Tags** = cross-cutting filters.
-- `@non-logged` — no storage state (`chromium-public` project).
-- `@logged` — uses `storageState` from `.auth/user.json` (`chromium-logged` project, depends on `setup`).
-- **Setup:** `tests/setup/auth.setup.ts` logs in once and saves storage state; `.auth/*` is gitignored.
+- `@non-logged` — no storage state (`chromium-non-logged` project).
+- `@logged` — uses `storageState` from `tmp/session.json` (`chromium-logged` project, depends on `setup`).
+- **Setup:** `tests/setup/auth.setup.ts` logs in once and saves storage state; `tmp/*` is gitignored (except `tmp/.gitkeep`).
 - Navigate via `routes.pages.*` from `src/config/routes.ts`.
 
 ## Assertions

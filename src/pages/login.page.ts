@@ -7,7 +7,6 @@ export class LoginPage {
   readonly emailInput: Locator;
   readonly passwordInput: Locator;
   readonly submitButton: Locator;
-  readonly loginForm: Locator;
   readonly loginError: Locator;
 
   constructor(page: Page) {
@@ -15,7 +14,6 @@ export class LoginPage {
     this.emailInput = page.getByTestId("email-input");
     this.passwordInput = page.getByTestId("password-input");
     this.submitButton = page.getByTestId("login-submit-btn");
-    this.loginForm = page.getByTestId("login-form");
     this.loginError = page.getByRole("alert");
   }
 

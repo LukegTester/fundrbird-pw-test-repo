@@ -10,8 +10,3 @@ export const wrongPasswordUser: LoginUserModel = {
   email: USER_EMAIL,
   password: "wrongpassword",
 };
-
-export const unknownEmailUser: LoginUserModel = {
-  email: "wrong@example.com",
-  password: USER_PASSWORD,
-};

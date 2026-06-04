@@ -4,7 +4,7 @@ import { expectResponseStatus } from "@src/api/assertions/api-status.assertion";
 import { FinancialRequest } from "@src/api/requests/financial.request";
 import { MarketplaceRequest } from "@src/api/requests/marketplace.request";
 import { routes } from "@src/config/routes";
-import { financialAccountZeroBalance } from "@src/mocks/marketplace.mock";
+import { financialAccountZeroBalance } from "@src/mocks/financial.mock";
 import { incomeTransactionPayload } from "@src/test-data/financial-transactions";
 
 test.describe("Marketplace purchase", () => {
@@ -50,19 +50,17 @@ test.describe("Marketplace purchase", () => {
       );
     },
   );
-});
 
-/**
- * Improvement opportunity: the UI should validate balance client-side and
- * block the purchase (or disable buy buttons) when funds are insufficient,
- * avoiding an unnecessary round-trip to the server.  Currently the backend
- * accepts the order regardless of balance, so the purchase succeeds even
- * with 0 funds.  The assertion below reflects that actual (unguarded)
- * behaviour.
- */
-test.describe("Marketplace purchase — zero balance", () => {
+  /**
+   * Improvement opportunity: the UI should validate balance client-side and
+   * block the purchase (or disable buy buttons) when funds are insufficient,
+   * avoiding an unnecessary round-trip to the server.  Currently the backend
+   * accepts the order regardless of balance, so the purchase succeeds even
+   * with 0 funds.  The assertion below reflects that actual (unguarded)
+   * behaviour.
+   */
   test(
-    "purchase succeeds despite zero balance (no client-side guard)",
+    "0 balance should not allow to purchase (no client-side guard)",
     { tag: ["@mock", "@logged", "@integration"] },
     async ({ marketplacePage, page }) => {
       // Arrange
