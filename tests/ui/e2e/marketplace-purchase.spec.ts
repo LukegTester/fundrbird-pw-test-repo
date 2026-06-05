@@ -28,11 +28,9 @@ test.describe("Marketplace purchase", () => {
 
       await marketplacePage.open();
       await marketplacePage.waitForOffersLoaded();
-      await expect(marketplacePage.firstBuyButton).toBeVisible();
 
       // Act
       await marketplacePage.buyFirstAvailableOffer();
-      await expect(marketplacePage.confirmationModal).toBeVisible();
 
       const [buyResponse] = await Promise.all([
         page.waitForResponse(
@@ -78,7 +76,6 @@ test.describe("Marketplace purchase", () => {
 
       // Act
       await marketplacePage.buyFirstAvailableOffer();
-      await expect(marketplacePage.confirmationModal).toBeVisible();
 
       const [buyResponse] = await Promise.all([
         page.waitForResponse(

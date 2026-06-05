@@ -1,4 +1,4 @@
-import { Locator, Page } from "@playwright/test";
+import { expect, Locator, Page } from "@playwright/test";
 import { BasePage } from "@src/pages/base.page";
 
 export class MarketplacePage extends BasePage {
@@ -25,13 +25,15 @@ export class MarketplacePage extends BasePage {
   }
 
   async waitForOffersLoaded(): Promise<void> {
-    await this.offersGrid.waitFor({ state: "visible" });
-    // Loading spinner inside grid — no test-id; wait for hidden before interacting.
-    await this.offersGrid.locator(".loading").waitFor({ state: "hidden" });
+    await expect(this.offersGrid).toBeVisible();
+    // Loading spinner inside grid — no test-id; wait until hidden before interacting.
+    await expect(this.offersGrid.locator(".loading")).toBeHidden();
   }
 
   async buyFirstAvailableOffer(): Promise<void> {
+    await expect(this.firstBuyButton).toBeVisible();
     await this.firstBuyButton.click();
+    await expect(this.confirmationModal).toBeVisible();
   }
 
   async confirmPurchase(): Promise<void> {
