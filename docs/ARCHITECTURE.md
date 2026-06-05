@@ -61,6 +61,10 @@ Three layers. Specs describe behavior; the business layer hides app detail; the 
 
 UI specs talk to `src/pages/*`, not raw selectors. Locators live in one place; a UI change touches one file. Locators are `public readonly` so specs can assert on them directly.
 
+- Methods that navigate to another page return the target Page Object (e.g. `login()` → `ProfilePage`). This keeps tests declarative: `const profilePage = await loginPage.login(demoUser)`.
+- Web-first assertions (`expect(...).toBeVisible()` / `.toBeHidden()`) are used inside PO methods as state guards (preconditions/postconditions). Business assertions stay in specs.
+- Each page class owns only the locators that belong to that screen.
+
 ### Storage state for auth
 
 The `setup` project logs in once and writes `tmp/session.json`; the `chromium-logged` project loads it via `storageState`. Avoids per-test logins. Rolnopol invalidates a prior JWT on re-login, so authenticated arrange reads the token from storage state rather than calling `/login` again.

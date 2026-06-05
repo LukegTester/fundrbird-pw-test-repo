@@ -27,7 +27,10 @@ Applies when editing UI tests, setup, integration mocks, or Page Objects. Refere
 
 - One page class per screen in `src/pages/`.
 - Expose **user actions** (`open`, `login`, `buyFirstAvailableOffer`) and **locators** for assertions (`loginError`, etc.).
-- Keep assertions in specs (or fixtures), not custom `expect*` methods on page classes.
+- Locators belong to the page they appear on — never leak cross-page locators (e.g. don't put profile elements in LoginPage).
+- If a method navigates to another page, **return the new Page Object** (`async login(): Promise<ProfilePage>`).
+- Use **web-first assertions** (`expect(...).toBeVisible()` / `.toBeHidden()`) as precondition/postcondition guards inside PO methods. Never use imperative `waitFor()`.
+- Business assertions (response status, notification text, expected URL) stay in specs.
 - Tests describe **business behavior**, not DOM structure.
 - Import extended test from `@src/fixtures/merge.fixtures` when using page fixtures.
 - If `data-testid` is missing in the app, use the next locator in the priority list and keep it inside the Page Object.

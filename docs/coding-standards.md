@@ -200,7 +200,39 @@ Page Objects should hide UI implementation details and expose business/user-leve
 
 Locators should be stored inside Page Object classes, not scattered across tests.
 
-For this framework size, `public readonly` locators on Page Objects are acceptable so specs can assert on them directly. Prefer wrapping user actions in methods (`open`, `login`, `buyFirstAvailableOffer`). Add dedicated assertion methods on the Page Object only when they improve readability.
+For this framework size, `public readonly` locators on Page Objects are acceptable so specs can assert on them directly. Prefer wrapping user actions in methods (`open`, `login`, `buyFirstAvailableOffer`). Locators that belong to a specific page stay in that page's class — do not leak cross-page locators (e.g. profile elements in LoginPage).
+
+### Web-first assertions as state guards
+
+Use **web-first assertions** (`expect(...).toBeVisible()`, `expect(...).toBeHidden()`) inside Page Object methods as **precondition/postcondition guards** — never imperative `waitFor()`. This ensures:
+
+- Better error messages in traces ("Expected element to be visible" vs generic timeout).
+- Auto-retry with Playwright's assertion engine.
+- The method is self-contained: callers don't need to add boilerplate waits.
+
+```ts
+// Good — web-first assertions as state guards
+async waitForOffersLoaded(): Promise<void> {
+  await expect(this.offersGrid).toBeVisible();
+  await expect(this.offersGrid.locator(".loading")).toBeHidden();
+}
+
+async buyFirstAvailableOffer(): Promise<void> {
+  await expect(this.firstBuyButton).toBeVisible();   // precondition
+  await this.firstBuyButton.click();                  // action
+  await expect(this.confirmationModal).toBeVisible(); // postcondition
+}
+```
+
+```ts
+// Bad — imperative waits
+async waitForOffersLoaded(): Promise<void> {
+  await this.offersGrid.waitFor({ state: "visible" });
+  await this.offersGrid.locator(".loading").waitFor({ state: "hidden" });
+}
+```
+
+**Distinction:** State guards (preconditions/postconditions of a user action) belong in the Page Object. Business assertions ("response status is 200", "notification says X") stay in the test.
 
 Good:
 
@@ -222,10 +254,12 @@ export class LoginPage {
     await this.page.goto(routes.pages.login);
   }
 
-  async login(user: LoginUserModel): Promise<void> {
+  async login(user: LoginUserModel): Promise<ProfilePage> {
     await this.emailInput.fill(user.email);
     await this.passwordInput.fill(user.password);
     await this.submitButton.click();
+
+    return new ProfilePage(this.page);
   }
 }
 ```
@@ -241,7 +275,7 @@ Tests should use Page Object methods:
 
 ```ts
 await loginPage.open();
-await loginPage.loginAs(demoUser);
+const profilePage = await loginPage.login(demoUser);
 ```
 
 ---
@@ -253,20 +287,22 @@ If a Page Object method causes navigation to another page, it should return the 
 Good:
 
 ```ts
-async loginAs(credentials: LoginCredentials): Promise<DashboardPage> {
-  await this.emailInput.fill(credentials.email);
-  await this.passwordInput.fill(credentials.password);
+async login(user: LoginUserModel): Promise<ProfilePage> {
+  await this.emailInput.fill(user.email);
+  await this.passwordInput.fill(user.password);
   await this.submitButton.click();
 
-  return new DashboardPage(this.page);
+  return new ProfilePage(this.page);
 }
 ```
 
-Usage:
+Usage — business assertions stay in the test:
 
 ```ts
-const dashboardPage = await loginPage.loginAs(demoUser);
-await dashboardPage.expectLoaded();
+const profilePage = await loginPage.login(demoUser);
+await expect(page).toHaveURL(expectedProfileUrl);
+await expect(profilePage.profileEmail).toBeVisible();
+await expect(profilePage.logoutButton).toBeVisible();
 ```
 
 If the method does not navigate to a new page, return `Promise<void>`.
@@ -274,12 +310,16 @@ If the method does not navigate to a new page, return `Promise<void>`.
 Good:
 
 ```ts
-async buyFirstAvailableCommodity(): Promise<void> {
+async buyFirstAvailableOffer(): Promise<void> {
+  await expect(this.firstBuyButton).toBeVisible();
   await this.firstBuyButton.click();
+  await expect(this.confirmationModal).toBeVisible();
 }
 ```
 
 Do not return Page Objects just to be clever. Return them only when navigation or screen transition really happens.
+
+Note: When a method that returns a Page Object is used in a context where navigation won't occur (e.g. failed login), the return value can be safely discarded.
 
 ---
 

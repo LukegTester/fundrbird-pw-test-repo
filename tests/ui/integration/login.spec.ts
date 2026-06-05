@@ -12,10 +12,12 @@ test.describe("User login", () => {
       const expectedProfileUrl = new RegExp(`${routes.pages.profile}$`);
 
       // Act
-      await loginPage.login(demoUser);
+      const profilePage = await loginPage.login(demoUser);
 
       // Assert
       await expect(page).toHaveURL(expectedProfileUrl);
+      await expect(profilePage.profileEmail).toBeVisible();
+      await expect(profilePage.logoutButton).toBeVisible();
     },
   );
 

@@ -1,6 +1,7 @@
 import { Locator, Page } from "@playwright/test";
 import type { LoginUserModel } from "@src/models/user.model";
 import { BasePage } from "@src/pages/base.page";
+import { ProfilePage } from "@src/pages/profile.page";
 
 export class LoginPage extends BasePage {
   url = "/login.html";
@@ -17,9 +18,11 @@ export class LoginPage extends BasePage {
     this.loginError = page.getByRole("alert");
   }
 
-  async login(user: LoginUserModel): Promise<void> {
+  async login(user: LoginUserModel): Promise<ProfilePage> {
     await this.emailInput.fill(user.email);
     await this.passwordInput.fill(user.password);
     await this.submitButton.click();
+
+    return new ProfilePage(this.page);
   }
 }
