@@ -1,8 +1,8 @@
-import type { Locator, Page } from "@playwright/test";
-import { routes } from "@src/routes/routes";
+import { Locator, Page } from "@playwright/test";
+import { BasePage } from "@src/pages/base.page";
 
-export class MarketplacePage {
-  readonly page: Page;
+export class MarketplacePage extends BasePage {
+  url = "/marketplace.html";
   readonly offersGrid: Locator;
   readonly firstBuyButton: Locator;
   readonly confirmationModal: Locator;
@@ -11,8 +11,7 @@ export class MarketplacePage {
   readonly notification: Locator;
 
   constructor(page: Page) {
-    this.page = page;
-    // No data-testid on browse grid / offer cards in v1.25.0 — stable IDs/classes from discovery.
+    super(page);
     this.offersGrid = page.locator("#browseOffers");
     this.firstBuyButton = this.offersGrid
       .locator(".btn-buy:not([disabled])")
@@ -23,10 +22,6 @@ export class MarketplacePage {
     );
     this.userBalance = page.locator("#userBalance");
     this.notification = page.getByRole("alert");
-  }
-
-  async open(): Promise<void> {
-    await this.page.goto(routes.pages.marketplace);
   }
 
   async waitForOffersLoaded(): Promise<void> {

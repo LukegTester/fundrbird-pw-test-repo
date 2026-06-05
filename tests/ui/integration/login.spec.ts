@@ -12,7 +12,6 @@ test.describe("User login", () => {
       const expectedProfileUrl = new RegExp(`${routes.pages.profile}$`);
 
       // Act
-      await loginPage.open();
       await loginPage.login(demoUser);
 
       // Assert
@@ -29,7 +28,6 @@ test.describe("User login", () => {
       const expectedLoginUrl = new RegExp(`${routes.pages.login}$`);
 
       // Act
-      await loginPage.open();
       await loginPage.login(wrongPasswordUser);
 
       // Assert
@@ -48,7 +46,6 @@ test.describe("User login", () => {
       const expectedLoginUrl = new RegExp(`${routes.pages.login}$`);
 
       // Act
-      await loginPage.open();
       await loginPage.login(unknownEmailUser);
 
       // Assert

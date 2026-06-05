@@ -11,10 +11,13 @@ type UiFixtures = {
 
 export const test = base.extend<UiFixtures>({
   loginPage: async ({ page }, use) => {
-    await use(new LoginPage(page));
+    const loginPage = new LoginPage(page);
+    await loginPage.open();
+    await use(loginPage);
   },
   marketplacePage: async ({ page }, use) => {
-    await use(new MarketplacePage(page));
+    const marketplacePage = new MarketplacePage(page);
+    await use(marketplacePage);
   },
   // eslint-disable-next-line no-empty-pattern -- reads token from storage state file, no browser deps
   apiToken: async ({}, use) => {
